@@ -1,0 +1,95 @@
+
+
+//
+// Created by carllu on 16-10-6.
+//
+
+
+#include <cstdlib>
+#include <iostream>
+#include <boost/bind.hpp>
+#include <boost/asio.hpp>
+#include <boost/thread.hpp>
+#include <boost/asio/ssl.hpp>
+#include <boost/random.hpp>
+#include "tcp_conf_handle.h"
+#include "inquery.h"
+#include "outquery_window.h"
+#include "logcpp.h"
+
+
+void ios_run( outquery_window &outq){
+    boost::asio::io_service ios;
+    // client
+    boost::asio::ssl::context ctx(boost::asio::ssl::context::tlsv1_client);
+    inquery inq(1024);
+
+
+    tcp_conf_handle c(ios, ctx,
+            "localhost",
+                      /*"192.168.25.231",*/
+                      19001, inq, outq);
+    c.set_login_data("login:name, password:123");
+    sleep(1);
+    ios.run();
+
+    ios.stop();
+}
+
+
+void rand_send(outquery &outq){
+    boost::mt19937 rng(time(NULL));
+    boost::uniform_int<> ui(0,6);
+    char buff[32];
+    for(auto i=0; i<(10); ++i) {         // 24小时 24*3600/3
+        sprintf(buff, "%d :)", i);
+        if( !outq.push_back( buff ) ){
+            cout << "! :(" << endl;
+        };
+        sleep(ui(rng));
+    }
+}
+
+void send_f(outquery &outq){
+    char buff[32];
+    for(auto i=0; i<20; ++i){
+        sprintf(buff, "%d :)", i);
+        if( !outq.push_back( buff ) ){
+            cout << "! :(" << endl;
+        };
+        usleep(1000);
+    }
+}
+
+
+void client_th(boost::asio::io_service &io_service){
+
+}
+
+
+int main(int argc, char* argv[])
+{
+
+    outquery_window outq(1024);
+
+    boost::thread t3(rand_send, boost::ref(outq));
+
+    sleep(6);
+    while (!outq.empty()){
+        boost::thread t2(ios_run, boost::ref(outq));
+        t2.join();
+        sleep(3);
+    }
+
+    t3.join();
+    sleep(3);
+
+
+    // Optional:  Delete all global objects allocated by libprotobuf.
+    google::protobuf::ShutdownProtobufLibrary();
+
+    syslog_stream log;
+    log << mylog::error <<  "ss" << endl;
+
+    return 0;
+}

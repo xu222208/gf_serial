@@ -1,0 +1,734 @@
+#pragma once
+#ifndef _XNetSDKDefine_H_
+#define _XNetSDKDefine_H_
+
+#ifndef uint64
+#if defined( WIN32 )
+typedef unsigned __int64	uint64;
+#else
+//typedef unsigned long long	uint64;
+#endif
+#endif
+
+#define N_XSDK_IP_MAX_SIZE 128
+#define SXSDK_NAME_LEN			32
+#define SXSDK_PTZ_PRESETNUM		256
+
+typedef enum EXSDK_ERROR
+{
+	EXSDK_ER_OK = 0,
+	EXSDK_ER_OBJ_NOT_EXIST = -1239510,
+	EXSDK_ER_VALUE_NOT_EXIST = -1239511,
+	EXSDK_ER_ERROR = -100000,
+	EXSDK_ER_PARAM_ERROR = -99999,
+	EXSDK_ER_CREATE_FILE = -99998,
+	EXSDK_ER_OPEN_FILE = -99997,
+	EXSDK_ER_WRITE_FILE = -99996,
+	EXSDK_ER_READ_FILE = -99995,
+	EXSDK_ER_NO_SUPPORTED = -99994,
+	EXSDK_ER_NET = -99993,					// NET ERROR
+	EXSDK_ER_OBJ_EXIST = -99992,
+	EXSDK_ER_TIMEOUT = -99991,
+	EXSDK_ER_NOT_FOUND = -99990,
+	EXSDK_ER_NEW_BUFFER = -99989,
+	EXSDK_ER_NET_RECV = -99988,
+	EXSDK_ER_NET_SEND = -99987,
+	EXSDK_ER_OBJECT_BUSY = -99986,
+	EXSDK_ER_SERVER_INTERNAL_ERROR = -99985,  //服务器内部错误
+	EXSDK_ER_SERVER_BIND_PORT = -99984,		//监听端口bind失败（端口被占用）
+	EXSDK_ER_SERVER_LISTEN = -99983,			// 监听服务器启动失败
+	EXSDK_ER_NET_SEND_BUF_FULL = -99982,		// 发送缓冲区满了
+	EXSDK_ER_USER_CANCEL = -90000,
+	EXSDK_ER_FILE_IS_ILLEGAL = -90001,	// FILE IS ILLEGAL
+	EXSDK_ER_Dev_NotFound = -70119,	// Not Found
+	EXSDK_ER_UserOrPassword = -70203,	// 登录设备密码错误
+}EXSDK_ERROR;
+
+typedef enum ESXSDK_CMD
+{
+	ESXSDK_MSG_BEGIN = 12000,
+	ESXSDK_DEV_LOGIN = 12001,				// 登录结果返回--XSDK_DevLogin
+
+	ESXSDK_MEDIA_START_REAL_PLAY = 12002,	// 实时视频结果返回--XSDK_MediaRealPlay
+	ESXSDK_MEDIA_START_FACE_IMAGE = 12003,	// 请求人脸抓图返回--XSDK_MediaGetFaceImage
+	ESXSDK_MEDIA_START_RECORD_PLAY = 12004,	// 录像回放结果返回--XSDK_MediaRecordPlay
+	ESXSDK_MEDIA_DOWN_RECORD_FILE = 12005,	// 录像下载
+	ESXSDK_MEDIA_DOWN_IMAGES_FILE = 12006,	// 录像缩略图下载
+	ESXSDK_MEDIA_ON_INFO = 12010,			// 媒体信息回调
+
+	// 设备协议交互ESXSDK_DEV_GENERAL_COMMAND
+			ESXSDK_DEV_GENERAL_COMMAND = 12100,		// 通用交互返回
+	ESXSDK_DEV_GET_SYS_CONFIG  = 12101,		// 设备系统配置获取
+	ESXSDK_DEV_SET_SYS_CONFIG  = 12102,		// 设备系统配置设置
+	ESXSDK_DEV_GET_CHN_CONFIG  = 12103,		// 设备通道配置获取
+	ESXSDK_DEV_SET_CHN_CONFIG  = 12104,		// 设备通道配置设置
+	ESXSDK_DEV_FIND_FILE	   = 12105,		// 设备通道配置设置
+	ESXSDK_DEV_GENERAL_COMMAND_END1  = 12300,// 通用交互返回
+	ESXSDK_DEV_GENERAL_COMMAND_END2  = 12499,// 通用交互内部使用
+
+	ESXSDK_ON_DEV_STATE		   = 12500,		// 设备状态返回，param1参考：EXSDK_DEV_STATE
+	ESXSDK_ON_DEV_ALARM_MSG    = 13000,		// 设备报警回调消息ID
+	ESXSDK_ON_SEARCH_DEVICES   = 13001,		// 局域网设备搜索--XSDK_SearchDevices
+	ESXSDK_MEDIA_ON_PLAY_STATE = 13002,		// 媒体状态回调
+	ESXSDK_MEDIA_PAUSE		   = 13003,		// 媒体暂停/播放
+	ESXSDK_MEDIA_SEEK_TO_TIME  = 13004,		// 媒体Seek
+	ESXSDK_MEDIA_SET_SPEED     = 13005,		// 媒体Seek
+
+	ESXSDK_MSG_END = 15000,
+}ESXSDK_CMD;
+
+typedef enum ESXSDK_DEV_COMMAND
+{
+	EXCMD_GENERAL = -1,
+	//C1: 登录,登出,保活
+			EXCMD_LOGIN_REQ	= 1000,
+	EXCMD_LOGIN_RSP	= 1001,
+	EXCMD_LOGOUT_REQ = 1002,
+	EXCMD_LOGOUT_RSP = 1003,
+	EXCMD_FORCELOGOUT_REQ = 1004,
+	EXCMD_FORCELOGOUT_RSP	= 1005,
+	EXCMD_KEEPALIVE_REQ	= 1006,
+	EXCMD_KEEPALIVE_RSP	= 1007,
+
+	EXCMD_LOGIN_DAS_REQ	= 1008,
+	EXCMD_LOGIN_DAS_RSP	= 1009,
+
+	EXCMD_LOGIN_INFO_ENCRYPT_REQ	= 1010,
+	EXCMD_LOGIN_INFO_ENCRYPT_RSP	= 1011,
+
+	//C2: 系统信息,存储信息
+			EXCMD_SYSINFO_REQ	= 1020,
+	EXCMD_SYSINFO_RSP	= 1021,
+
+	//C3: 编码配置, 遮挡,叠加,图像颜色
+	//C4: 录像设置
+	//C5: 动检,遮挡,视频丢失,外部告警,网络告警,存储告警
+	//C6: 通用网络配置,网络服务配置
+	//C7: 串口配置
+	//C8: 云台配置,预置点,巡航
+	//C9: 本地轮巡,TV调解,视频输入,输出,音频输入
+	//C10: 通用配置,本地化配置
+	//C11: 自动维护
+			EXCMD_CONFIG_SET = 1040,
+	EXCMD_CONFIG_SET_RSP = 1041,
+	EXCMD_CONFIG_GET = 1042,
+	EXCMD_CONFIG_GET_RSP = 1043,
+	EXCMD_DEFAULT_CONFIG_GET = 1044,
+	EXCMD_DEFAULT_CONFIG_GET_RSP = 1045,
+	EXCMD_CONFIG_CHANNELTILE_SET = 1046,
+	EXCMD_CONFIG_CHANNELTILE_SET_RSP = 1047,
+	EXCMD_CONFIG_CHANNELTILE_GET = 1048,
+	EXCMD_CONFIG_CHANNELTILE_GET_RSP = 1049,
+
+	EXCMD_CONFIG_CHANNELTILE_DOT_SET = 1050,
+	EXCMD_CONFIG_CHANNELTILE_DOT_SET_RSP = 1051,
+
+	//系统调试
+			EXCMD_SYSTEM_DEBUG_REQ = 1052,
+	EXCMD_SYSTEM_DEBUG_RSP = 1053,
+	//OSD三行点阵信息
+			EXCMD_CONFIG_OSDINFO_DOT_SET = 1054,
+	EXCMD_CONFIG_OSDINFO_DOT_SET_RSP = 1055,
+
+	//C12: 能力级查询
+			EXCMD_ABILITY_GET = 1360,
+	EXCMD_ABILITY_GET_RSP = 1361,
+
+	//C13: 云台控制
+			EXCMD_PTZ_REQ	= 1400,
+	EXCMD_PTZ_RSP = 1401,
+
+	//C14: 监视控制
+			EXCMD_MONITOR_REQ	= 1410,
+	EXCMD_MONITOR_RSP	= 1411,
+	EXCMD_MONITOR_DATA = 1412,
+	EXCMD_MONITOR_CLAIM = 1413,
+	EXCMD_MONITOR_CLAIM_RSP = 1414,
+
+	//C15: 回放控制
+			EXCMD_PLAY_REQ = 1420,
+	EXCMD_PLAY_RSP = 1421,
+	EXCMD_PLAY_DATA = 1422,
+	EXCMD_PLAY_EOF = 1423,
+	EXCMD_PLAY_CLAIM = 1424,
+	EXCMD_PLAY_CLAIM_RSP = 1425,
+	EXCMD_DOWNLOAD_DATA = 1426,
+
+	//C16: 语音对讲控制
+			EXCMD_TALK_REQ = 1430,
+	EXCMD_TALK_RSP = 1431,
+	EXCMD_TALK_CU_PU_DATA = 1432,
+	EXCMD_TALK_PU_CU_DATA = 1433,
+	EXCMD_TALK_CLAIM = 1434,
+	EXCMD_TALK_CLAIM_RSP = 1435,
+	EXCMD_TALK_NVR_TO_IPC_REQ = 1436, //NVR和其连接的前端开始对讲
+	EXCMD_TALK_NVR_TO_IPC_RSP = 1437,
+
+	//C17: 文件查询包括录像文件,图片文件,日志文件
+			EXCMD_FILESEARCH_REQ = 1440,
+	FILESEARCH_RSP = 1441,
+	EXCMD_LOGSEARCH_REQ = 1442,
+	EXCMD_LOGSEARCH_RSP = 1443,
+	EXCMD_FILESEARCH_BYTIME_REQ = 1444,
+	EXCMD_FILESEARCH_BYTIME_RSP = 1445,
+
+	//C18: 系统管理
+			EXCMD_SYSMANAGER_REQ = 1450,
+	EXCMD_SYSMANAGER_RSP = 1451,
+
+	// 系统时间和录像模式查询
+			EXCMD_TIMEQUERY_REQ = 1452,
+	EXCMD_TIMEQUERY_RSP = 1453,
+
+	//C19: 硬盘管理
+			EXCMD_DSIKMANAGER_REQ = 1460,
+	EXCMD_DSIKMANAGER_RSP	= 1461,
+
+	//C20: 用户管理
+			EXCMD_FULLAUTHORITYLIST_GET = 1470,
+	EXCMD_FULLAUTHORITYLIST_GET_RSP = 1471,
+	EXCMD_USERS_GET	= 1472,
+	EXCMD_USERS_GET_RSP = 1473,
+	EXCMD_GROUPS_GET = 1474,
+	EXCMD_GROUPS_GET_RSP = 1475,
+	EXCMD_ADDGROUP_REQ = 1476,
+	EXCMD_ADDGROUP_RSP = 1477,
+	EXCMD_MODIFYGROUP_REQ = 1478,
+	EXCMD_MODIFYGROUP_RSP = 1479,
+	EXCMD_DELETEGROUP_REQ = 1480,
+	EXCMD_DELETEGROUP_RSP = 1481,
+	EXCMD_ADDUSER_REQ = 1482,
+	EXCMD_ADDUSER_RSP = 1483,
+	EXCMD_MODIFYUSER_REQ = 1484,
+	EXCMD_MODIFYUSER_RSP = 1485,
+	EXCMD_DELETEUSER_REQ = 1486,
+	EXCMD_DELETEUSER_RSP = 1487,
+	EXCMD_MODIFYPASSWORD_REQ = 1488,
+	EXCMD_MODIFYPASSWORD_RSP = 1489,
+
+	//C21: 布警/撤警,告警上报
+			EXCMD_GUARD_REQ = 1500,
+	EXCMD_GUARD_RSP = 1501,
+	EXCMD_UNGUARD_REQ	= 1502,
+	EXCMD_UNGUARD_RSP = 1503,
+	EXCMD_ALARM_REQ	= 1504,
+	EXCMD_ALARM_RSP	= 1505,
+	EXCMD_NET_ALARM_REQ = 1506,
+	EXCMD_NET_ALARM_RSP = 1507,
+	EXCMD_ALARMCENTER_MSG_REQ	= 1508,
+
+	//C22: 系统升级控制
+			EXCMD_UPGRADE_REQ = 1520,
+	EXCMD_UPGRADE_RSP	 = 1521,
+	EXCMD_UPGRADE_DATA = 1522,
+	EXCMD_UPGRADE_DATA_RSP = 1523,
+	EXCMD_UPGRADE_PROGRESS = 1524,
+	EXCMD_UPGRADE_INFO_REQ = 1525,
+	EXCMD_UPGRADE_INFO_RSQ = 1526,
+	EXCMD_UPGRADE_RESULT   = 1527, //升级结果通知
+
+	//C23: 设备自动搜索
+			EXCMD_IPSEARCH_REQ = 1530,
+	EXCMD_IPSEARCH_RSP = 1531,
+	EXCMD_IP_SET_REQ = 1532,
+	EXCMD_IP_SET_RSP = 1533,
+
+	//C24: 系统信息导入导出
+			EXCMD_CONFIG_IMPORT_REQ = 1540,
+	EXCMD_CONFIG_IMPORT_RSP = 1541,
+	EXCMD_CONFIG_EXPORT_REQ = 1542,
+	EXCMD_CONFIG_EXPORT_RSP = 1543,
+	EXCMD_LOG_EXPORT_REQ = 1544,
+	EXCMD_LOG_EXPORT_RSP = 1545,
+
+	//C25: 网络键盘
+			EXCMD_NET_KEYBOARD_REQ = 1550,
+	EXCMD_NET_KEYBOARD_RSP = 1551,
+
+	//  网络抓拍
+			EXCMD_NET_SNAP_REQ = 1560,
+	EXCMD_NET_SNAP_RSP = 1561,
+
+	EXCMD_SET_IFRAME_REQ = 1562,
+	EXCMD_SET_IFRAME_RSP = 1563,
+
+	//  透明串口
+			EXCMD_RS232_READ_REQ = 1570,
+	EXCMD_RS232_READ_RSP = 1571,
+	EXCMD_RS232_WRITE_REQ = 1572,
+	EXCMD_RS232_WRITE_RSP = 1573,
+	EXCMD_RS485_READ_REQ = 1574,
+	EXCMD_RS485_READ_RSP = 1575,
+	EXCMD_RS485_WRITE_REQ = 1576,
+	EXCMD_RS485_WRITE_RSP = 1577,
+
+	EXCMD_TRANSPARENT_COMM_REQ = 1578,
+	EXCMD_TRANSPARENT_COMM_RSP = 1579,
+	EXCMD_RS485_TRANSPARENT_DATA_REQ = 1580,
+	EXCMD_RS485_TRANSPARENT_DATA_RSP = 1581,
+	EXCMD_RS232_TRANSPARENT_DATA_REQ = 1582,
+	EXCMD_RS232_TRANSPARENT_DATA_RSP = 1583,
+
+	//网络登录时间同步
+			EXCMD_SYNC_TIME_REQ = 1590,
+	EXCMD_SYNC_TIME_RSP = 1591,
+	//ui截图
+			EXCMD_PHOTO_GET_REQ = 1600,
+	EXCMD_PHOTO_GET_RSP = 1601,
+
+	//上传数据
+			EXCMD_UPLOAD_DATA_START_REQ = 1610,
+	EXCMD_UPLOAD_DATA_START_RSP = 1611,
+	EXCMD_UPLOAD_DATA_STOP_REQ = 1612,
+	EXCMD_UPLOAD_DATA_STOP_RSP = 1613,
+
+	//1614 - 1629预留MSG，区分上传数据类型
+			EXCMD_VEHICLE_INFO_REQ = 1614,
+	EXCMD_VEHICLE_INFO_RSP = 1615,
+
+	EXCMD_RECORD_STATE_REQ = 1616,
+	EXCMD_RECORD_STATE_RSP = 1617,
+
+	EXCMD_DIGITCHN_STATE_REQ = 1618,
+	EXCMD_DIGITCHN_STATE_RSP = 1619,
+
+	EXCMD_TITLE_INFO_REQ = 1620,
+	EXCMD_TITLE_INFO_RSP = 1621,
+
+	//人数统计数据
+			EXCMD_CPC_DATA_SEARCH_REQ = 1630,
+	EXCMD_CPC_DATA_SEARCH_RSP = 1631,
+	EXCMD_CPC_DATA_CLEAR_REQ = 1632,
+	EXCMD_CPC_DATA_CLEAR_RSP = 1633,
+
+	//远程搜索
+			EXCMD_NET_LOCALSEARCH_REQ = 1634,
+	EXCMD_NET_LOCALSEARCH_RSP = 1635,
+
+	//邮件测试
+			EXCMD_NET_MAILTEST_REQ = 1636,
+	EXCMD_NET_MAILTEST_RSP = 1637,
+
+	//手机信息
+			EXCMD_PHONE_INFO_SET = 1638,
+	EXCMD_PHONE_INFO_SET_RSP = 1639,
+
+	//硬盘信息
+			EXCMD_NET_RECORD_INFO_REQ = 1640,
+	EXCMD_NET_RECORD_INFO_RSP = 1641,
+
+	//文件操作，包括删除增加文件夹
+			EXCMD_NET_FILE_OPRATE_REQ = 1642,
+	EXCMD_NET_FILE_OPRATE_RSP = 1643,
+
+	//默认配置导出，就出厂的默认的配置
+			EXCMD_NET_CUSTOM_CFG_EXPORT_REQ = 1644,
+	EXCMD_NET_CUSTOM_CFG_EXPORT_RSP= 1645,
+
+	//本地音频文件搜索
+			EXCMD_MUSICFILESEARCH_REQ = 1646,
+	EXCMD_MUSICFILESEARCH_RSP = 1647,
+
+	//本地音频文件播放控制
+			EXCMD_MUSICPLAY_REQ = 1648,
+	EXCMD_MUSICPLAY_RSP = 1649,
+
+	EXCMD_AUTHORIZATION_REQ = 1650,
+	EXCMD_AUTHORIZATION_RSQ = 1651,
+
+	EXCMD_SET_DIG_IP_REQ = 1652,
+	EXCMD_SET_DIG_IP_RSP = 1653,
+
+	//设置OSD信息，提供给客户
+			EXCMD_SET_OSD_INFO_REQ = 1654,
+	EXCMD_SET_OSD_INFO_RSP = 1655,
+
+	//OSD叠加，用于实时的叠加，不保存配置
+			EXCMD_SET_OSD_INFO_REQ_V2 = 1656,
+	EXCMD_SET_OSD_INFO_RSP_V2 =1657,
+
+	//语言导出导入
+			EXCMD_EXPORT_LANGUAGE_REQ = 1666,
+	EXCMD_EXPORT_LANGUAGE_RSP = 1667,
+	EXCMD_IMPORT_LANGUAGE_REQ = 1668,
+	EXCMD_IMPORT_LANGUAGE_RSP = 1669,
+	EXCMD_DELETE_LANGUAGE_REQ = 1770,
+	EXCMD_DELETE_LANGUAGE_RSP = 1771,
+
+	//云升级控制
+			EXCMD_CLOUD_VERSION_REQ = 2000,
+	EXCMD_CLOUD_VERSION_RSP	 = 2001,
+	EXCMD_CLOUD_UPGRADE_START_REQ = 2002,
+	EXCMD_CLOUD_UPGRADE_START_RSP = 2003,
+	EXCMD_CLOUD_UPGRADE_STOP_REQ = 2004,
+	EXCMD_CLOUD_UPGRADE_STOP_RSP = 2005,
+	EXCMD_CLOUD_UPGRADE_PROGRESS = 2006,
+
+	//FTP
+			EXCMD_NET_FTPTEST_REQ  = 2008,
+	EXCMD_NET_FTPTEST_RSP = 2009,
+	//对讲恢复音频开关
+			EXCMD_TLAK_ONLY_RECVCONFIG_REQ= 2010,
+	EXCMD_TLAK_ONLY_RECVCONFIG_RSP = 2011,
+
+	//设置录像指示灯状态
+			EXCMD_FB_EXTRA_STATE_REQ = 2012,
+	EXCMD_FB_EXTRA_STATE_RSP = 2013,
+
+	//获取录像指示灯状态
+			EXCMD_FB_EXTRA_GET_STATE_REQ = 2014,
+	EXCMD_FB_EXTRA_GET_STATE_RSP = 2015,
+	EXCMD_CLOUD_NEW_VERSION_REQ = 2016,		//新版本客户端使用该命令查询版本信息
+	EXCMD_CLOUD_NEW_VERSION_RSP = 2017,
+	EXCMD_CLOUD_NEW_UPGRADE_START_REQ = 2018,
+	EXCMD_CLOUD_NEW_UPGRADE_START_RSP = 2019,
+
+
+	EXCMD_NET_SPLIT_CONTROL_REQ=2020,
+	EXCMD_NET_SPLIT_CONTROL_RSP=2021,
+
+	EXCMD_CONSUMER_STATE_UPLOAD_REQ = 2022,
+	EXCMD_CONSUMER_STATE_UPLOAD_RSP = 2023,
+
+	EXCMD_ELECT_STATE_REQ  = 2024,
+	EXCMD_ELECT_STATE_RSP = 2025,
+
+	EXCMD_NET_FILE_BACKUP_REQ = 2030,	//备份到u盘控制
+	EXCMD_NET_FILE_BACKUP_RSP = 2031,
+
+	EXCMD_GET_BREVIARY_PIC_REQ = 2038,  // 录像缩略图请求
+	EXCMD_GET_BREVIARY_PIC_RSP = 2039,  // 录像缩略图请求返回
+	EXCMD_GET_BREVIARY_PIC_DATA_RSP = 2140,// 录像缩略图数据返回
+
+	EXCMD_MUSICBOX_STATE_REQ  = 2050,
+	MUSICBOX_STATE_RSP = 2051,
+
+	EXCMD_FACE_IMAGE_GET_REQ  = 2060,
+	EXCMD_FACE_IMAGE_GET_RSP  = 2061,
+
+	EXCMD_FACE_IMAGE_CLAIM_REQ  = 2062,
+	EXCMD_FACE_IMAGE_CLAIM_RSP  = 2063,
+	EXCMD_FACE_IMAGE_DATA  = 2064,
+
+	// 订阅巡航上报结束
+			EXCMD_PTZ_TOUR_END_RSP = 2141,
+
+	EXCMD_MODEINDEX_UPLOAD_REQ = 3014,
+
+	EXCMD_GENERALSTATE_UPLOAD_REQ = 3016,  //通用状态上报
+	EXCMD_GENERALSTATE_UPLOAD_RSP = 3017,
+	EXCMD_GET_LOGIN_ENCRYPTION_TYPE = 99999,//获取设备登录密码加密类型
+}ESXSDK_DEV_COMMAND;
+
+// 设备状态枚举
+typedef enum ESDK_STATE_DEV
+{
+	ESTATE_DEV_None = 0,
+	ESTATE_DEV_NetDisConnect = 2,	// 设备断线
+	ESTATE_DEV_Logined = 6,			// 设备登录成功
+}ESDK_STATE_DEV;
+
+// 通道状态枚举
+typedef enum EMediaChnState
+{
+	EState_Media_NetDisConnect = 2,	// 通道断线
+	EState_Media_NetConnecting = 3,	// 正在连接
+	EState_Media_NetConnected = 4,	// 网络连接成功
+	EState_Media_RecvData = 8,		// 正在接收数据
+	EState_Media_DataEnd = 9,		// 数据接收结束
+}EMediaChnState;
+
+////////////////////////////About Device////////////////////////////
+//IP addr
+typedef union _SXSDK_IPAddress
+{
+	unsigned char	c[4];
+	unsigned short	s[2];
+	unsigned int 	l;
+}SXSDK_IPAddress;
+
+////!普通网络设置 --
+typedef struct SXSDK_CONFIG_NET_COMMON
+{
+	//!主机名
+	char HostName[64];
+	//!主机IP
+	SXSDK_IPAddress HostIP;
+	//!子网掩码
+	SXSDK_IPAddress Submask;
+	//!网关IP
+	SXSDK_IPAddress Gateway;
+	char pLocalLinkAddr[32];	//本地链路地址
+	char pAddr[64];				//ipv6地址
+	char pGateway[64];
+	//!HTTP服务端口
+	int HttpPort;
+	//!TCP侦听端口
+	int TCPPort;
+	//!SSL侦听端口
+	int SSLPort;
+	//!UDP侦听端口
+	int UDPPort;
+	//!最大连接数
+	int MaxConn;
+	//!监视协议 {"TCP","UDP","MCAST",…}
+	char MonMode[32];
+	//!限定码流值
+	int MaxBps;
+	int  TransferPlan;			///传输策略
+	bool bUseHSDownLoad;		///是否启用高速录像下载测率
+	char sMac[64];				///MAC地址
+	char sSn[64]; 				///序列号
+	int  DeviceType;   			///设备类型,手机区分是插座还是普通设备
+
+	int ChannelNum;				///通道数
+	int	Device_Type;			///设备类型，见enum SDK_DevType
+	char Version[64];			//版本信息
+	char BuildDate[64];  			//版本日期
+	char OtherFunction[49];		///用来保存修改其它厂家IP所需信息
+	char Manufacturer;			///设备生产商，见枚举SDK_Manufacturer
+	char Resume[6];				///保留
+}SXSDK_CONFIG_NET_COMMON;
+
+////////Login////////
+typedef enum EDEV_CNN_TYPE
+{
+	EDEV_CNN_TYPE_IP_DNS,
+	EDEV_CNN_TYPE_REG,
+}EDEV_NET_TYPE;
+
+typedef struct SXSDKLoginParam
+{
+	char sDevId[128]; // ip/dns/sn
+	int  nDevPort;
+	char sUserName[64];
+	char sPassword[64];
+	EDEV_NET_TYPE  nCnnType;
+}SXSDKLoginParam;
+
+// 录像相关参数
+#define  EMFileType_mp4     "mp4"			//MP4录像
+#define  EMFileType_jpg     "jpg"			//图片
+#define  EMFileType_idximg  "idximg"		//索引图片
+#define  EMFileType_recod   "h264"			//录像
+
+#define  EMFileSubType_ALL		"*"			// 全部录像或抓图
+#define  EMFileSubType_ALARM	"A"			// 报警录像或抓图
+#define  EMFileSubType_DETECT	"M"			// 动检报警录像或抓图
+#define  EMFileSubType_HANDLE	"H"			// 手动录像或手动抓图
+#define  EMFileSubType_KEY		"K"			// 关键录像或关键抓图
+#define  EMFileSubType_URGENT		"V"		// 紧急录像
+#define  EMFileSubType_ORIGINAL		"R"		// 原始录像
+#define  EMFileSubType_INDUCTION	"P"		// 感应图片
+typedef struct SXSDKQueryRecordReq
+{
+	int nChannel;
+	int nStreamType;		// 0:Main 1:SubStream
+	char sBeginTime[32];	// YYYY-MM-DD HH:mm:SS
+	char sEndTime[32];		// YYYY-MM-DD HH:mm:SS
+	char sFileType[32];
+	char sFileSubType[32];
+}SXSDKQueryRecordReq;
+
+typedef struct SXSDKQueryRecordRes
+{
+	int nChannel;
+	int nFileLength;
+	int nDiskNo;
+	int nSerialNo;
+	int nStreamType;
+	char sFileType[32];
+	char sFileSubType[32];
+	char sBeginTime[32];	// YYYY-MM-DD HH:mm:SS
+	char sEndTime[32];		// YYYY-MM-DD HH:mm:SS
+	char sFileName[128];	// 文件名称
+}SXSDKQueryRecordRes;
+
+////////Device PTZ////////
+typedef enum SXSDK_PTZ_ControlType
+{
+	SXSDK_PTZ_UP_CONTROL = 0,			//up
+	SXSDK_PTZ_DOWN_CONTROL,				//down
+	SXSDK_PTZ_LEFT_CONTROL,				//left
+	SXSDK_PTZ_RIGHT_CONTROL,			//right
+	SXSDK_PTZ_ZOOM_ADD_CONTROL,			//zoom+
+	SXSDK_PTZ_ZOOM_DEC_CONTROL,			//zoom-
+	SXSDK_PTZ_FOCUS_ADD_CONTROL,		//focus+
+	SXSDK_PTZ_FOCUS_DEC_CONTROL,		//focus-
+	SXSDK_PTZ_APERTURE_ADD_CONTROL,		//aperture+
+	SXSDK_PTZ_APERTURE_DEC_CONTROL,		//aperture-
+	SXSDK_PTZ_POINT_MOVE_CONTROL,		//move to preset
+	SXSDK_PTZ_POINT_SET_CONTROL,		//set
+	SXSDK_PTZ_POINT_DEL_CONTROL,		//delete
+	SXSDK_PTZ_POINT_LOOP_CONTROL,		//tour in presets
+	SXSDK_PTZ_LAMP_CONTROL,             //lamp and wiper
+	SXSDK_EXTPTZ_LEFTTOP ,				//left-up
+	SXSDK_EXTPTZ_RIGHTTOP,				//right-up
+	SXSDK_EXTPTZ_LEFTDOWN,				//left-down
+	SXSDK_EXTPTZ_RIGHTDOWN,				//right-down
+}SXSDK_PTZ_ControlType;
+
+
+typedef struct SXSDK_PRESET_INFO
+{
+	unsigned char 	ucChannel;					//channel
+	unsigned char 	ucPresetID;					//preset No.
+	unsigned char	iSpeed;						//preset speed speed 1~15 level
+	unsigned char	iDWellTime;					//preset delay time 1~255
+	unsigned char	szPresetName[SXSDK_NAME_LEN];		//preset name
+}SXSDK_PRESET_INFO;
+
+typedef struct  SXSDK_PTZ_PRESET_SCHEDULE
+{
+	unsigned int dwSize;
+	unsigned int dwCount;
+	SXSDK_PRESET_INFO	struPreset[SXSDK_PTZ_PRESETNUM];
+}SXSDK_PTZ_PRESET_SCHEDULE;
+#define	SXSDK_DEV_PRESET_CFG			90		//configure of PTZ preset
+
+
+////////////////////////////About Media////////////////////////////
+typedef enum EXSDK_DATA_FORMATE
+{
+	EXSDK_DATA_FORMATE_NONE =  0,
+	EXSDK_DATA_FORMATE_FRAME = 1,
+	EXSDK_DATA_FORMATE_YUV420 =2,								// 暂不支持
+	EXSDK_DATA_MEDIA_ON_PLAY_STATE = ESXSDK_MEDIA_ON_PLAY_STATE,// 媒体状态回调EMediaChnState
+	EXSDK_DATA_FORMATE_FACE_IMAGE = 2064,						// 人脸识别图片
+}EXSDK_DATA_FORMATE;
+
+#define XSDK_SAMPLE_FREQ_4000	1
+#define XSDK_SAMPLE_FREQ_8000	2
+#define XSDK_SAMPLE_FREQ_11025	3
+#define XSDK_SAMPLE_FREQ_16000	4
+#define XSDK_SAMPLE_FREQ_20000	5
+#define XSDK_SAMPLE_FREQ_22050	6
+#define XSDK_SAMPLE_FREQ_32000	7
+#define XSDK_SAMPLE_FREQ_44100	8
+#define XSDK_SAMPLE_FREQ_48000	9
+
+// Stream type:
+#define XSDK_STREAM_UNKNOWN			0
+#define XSDK_STREAM_AVI				1
+#define XSDK_STREAM_DHPT			3
+#define XSDK_STREAM_NEW				4
+#define XSDK_STREAM_HB				5
+#define XSDK_STREAM_AUDIO			6
+#define XSDK_STREAM_PS              7
+#define XSDK_STREAM_STD             8
+#define XSDK_STREAM_ASF				9
+#define XSDK_STREAM_SVAC			10
+#define XSDK_STREAM_XM				13
+
+// Frame Type and SubType
+#define XSDK_FRAME_TYPE_UNKNOWN			0
+#define XSDK_FRAME_TYPE_VIDEO			1
+#define XSDK_FRAME_TYPE_AUDIO			2
+#define XSDK_FRAME_TYPE_DATA			3
+
+#define XSDK_FRAME_TYPE_VIDEO_I_FRAME	0
+#define XSDK_FRAME_TYPE_VIDEO_P_FRAME	1
+#define XSDK_FRAME_TYPE_VIDEO_B_FRAME	2
+#define XSDK_FRAME_TYPE_VIDEO_S_FRAME	3
+#define XSDK_FRAME_TYPE_DATA_TEXT		5
+#define XSDK_FRAME_TYPE_DATA_INTL		6
+
+// Encode type:
+#define XSDK_ENCODE_UNKNOWN				0
+#define XSDK_ENCODE_VIDEO_MPEG4			1
+#define XSDK_ENCODE_VIDEO_H264			2
+#define XSDK_ENCODE_VIDEO_H265			3
+#define XSDK_ENCODE_VIDEO_JPEG          3
+#define XSDK_ENCODE_VIDEO_SVAC          5
+#define XSDK_ENCODE_VIDEO_SVAC_NEW      6
+#define XSDK_ENCODE_AUDIO_PCM8			7	// 8BITS,8K
+#define XSDK_ENCODE_AUDIO_G729			8
+#define XSDK_ENCODE_AUDIO_IMA			9
+#define XSDK_ENCODE_AUDIO_PCM_MULAW		10
+#define XSDK_ENCODE_AUDIO_G721			11
+#define XSDK_ENCODE_AUDIO_PCM8_VWIS		12	// 16BITS,8K
+#define XSDK_ENCODE_AUDIO_ADPCM			13	// 16BITS,8K/16K
+#define XSDK_ENCODE_AUDIO_G711A			14	// 16BITS,8K
+#define XSDK_ENCODE_AUDIO_AAC			15
+#define XSDK_ENCODE_AUDIO_AAC2          16
+#define XSDK_ENCODE_AUDIO_G711U			22
+#define XSDK_ENCODE_AUDIO_TALK          30
+#define XSDK_ENCODE_AUDIO_MP4			100
+
+typedef struct SXSDK_FRAME_INFO
+{
+	unsigned char *pHeader;
+	unsigned char *pContent;
+	int nLength;
+	int nFrameLength;
+
+	int nType;
+	int nSubType;
+
+	int nEncodeType; // MPEG4/H264, PCM, MSADPCM, etc.
+
+	int nYear;
+	int nMonth;
+	int nDay;
+	int nHour;
+	int nMinute;
+	int nSecond;
+	uint64 nTimeStamp;
+
+	int  nFrameRate;
+	int	 nWidth;
+	int	 nHeight;
+
+	int nChannels;
+	int nBitsPerSample;
+	int nSamplesPerSecond;
+
+	int nParam1;		// 扩展用
+	int nParam2;		// 扩展用
+	uint64 nPos;
+}SXSDK_FRAME_INFO;
+
+/////////////////////////////////////////////////////////
+typedef struct SXSDK_IA_COMM_RES_S
+{
+	char resultType; //识别类型类型  0:车牌  1:人脸识别
+	char picSubType; //0:大图  1:小图
+	char picFormat;  //0:jpg  1:bmp   2:yuv
+	char tagNum;		//目标个数
+	unsigned int framID;	//帧ID
+	unsigned int tagsec;		//事件发生时的时间秒
+	unsigned int tagusec;		//事件发生时的时间微妙
+	char channel;
+	char reserved[3];
+}SXSDK_IA_COMM_RES_S;
+
+typedef struct SXSDK_FACE_DETECT		//人脸信息
+{
+	char sex;//性别
+	char age;//年龄
+	char resv[26];
+}SXSDK_FACE_DETECT;
+
+typedef struct SXSDK_RECT_S
+{
+	int leftX;
+	int topY;
+	int width;
+	int height;
+} SXSDK_RECT_S;
+
+typedef struct SXSDK_FR_TARGET_INFO	//人脸检测
+{
+	SXSDK_RECT_S stRect;
+	SXSDK_FACE_DETECT face;
+	char resv[12];
+}SXSDK_FR_TARGET_INFO;
+
+typedef struct SDK_IA_FR_REC_S		//人脸检测
+{
+	SXSDK_IA_COMM_RES_S comm;
+	int index;						//当前图片的索引号
+	SXSDK_FR_TARGET_INFO info;		// FR_TARGET_INFO
+}SXSDK_IA_FR_REC_S;
+
+#endif //_XNetSDKDefine_H_

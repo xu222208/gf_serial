@@ -1,0 +1,52 @@
+// 一个数据包包含2部分
+// 1, Head,  2,Data
+package TcpHead;
+option java_package = "cn.bearhunting.tcp.protocol";
+option java_outer_classname = "TcpHead";
+
+// lite
+option optimize_for = CODE_SIZE;
+
+// udp 消息头
+message Head {
+    enum HeadInfo {
+        Tcp_id_start = 1;           // 消息开始编号
+        Tcp_id_max   = 65535;         // 消息最大编号
+        Tcp_size_max = 20480;        // 消息的最大值
+    }
+
+    required fixed32 message_id     = 1 [default = 0]; //消息的序号
+    required fixed32 message_size   = 2 [default = 0]; //随后消息的长度
+
+    enum MessageType {
+        Normal          = 1;                // 正常数据, 对应消息类型 Data
+        Conf_message    = 2;                 // 确认消息， 对应消息类型 Conf
+        PingPong        = 3;                // ping.pong
+        connect_conf    = 4;                // 连接上服务器，服务端给的回执
+    }
+    required fixed32 message_type    = 3 [default = 1] ;
+}
+
+// udp 消息内容
+message Data {
+    required bytes info = 1;            // 数据内容
+}
+
+// conf 消息
+message Conf {
+    required int32 message_id = 1;      // 确认收到的消息
+}
+
+// connect_conf 消息
+message Connect_conf {
+    required int64 servertime = 1;      // 服务器时间
+}
+
+// ping.pong 消息
+message PingPong {
+    enum PingType {
+        Ping            = 1;
+        Pong            = 2;
+    }
+    required int32 ping_type = 1;
+}

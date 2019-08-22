@@ -1,0 +1,41 @@
+cmake_minimum_required(VERSION 3.5.1)
+project(FacePictureClient)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb3 -pipe -std=c++11 -L/usr/local/lib -I/usr/local/include -L../proto_ss_lib/ -I../proto_ss/")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -L../zmq/lib/ -I../zmq/include/ -L../jvt_lib/ -I../kuangshi -I../kuangshi/Json_Header")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -L../zmq/lib/ -I../zmq/include/ -L../jvt_lib/ -I../kuangshi -I../kuangshi/Json_Header -L../NETDEV_lib  -Wl,-rpath=../NETDEV_lib  -I../NETDEV")
+#"option"用来定义宏，"ON"表示打开，"OFF"表示关闭
+option(RECEIVE_PICTURE "Use tutorial provided math implementation" OFF)
+
+if (RECEIVE_PICTURE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -L../receive_picture_lib/ -I../receive_picture/")
+    set(EXTRA_LIBS_RECEIVE receive_save_picture rabbitmq mongocxx bsoncxx)
+    set(SOURCE_FILES receive_picture/ReceivePicture.h)
+    ADD_DEFINITIONS(-D RECEIVE_SAVE_PICTURE)
+endif (RECEIVE_PICTURE)
+
+
+set(EXTRA_LIBS protobuf ssl crypto pthread ss_client boost_system boost_filesystem boost_thread boost_program_options
+        log4cpp hcnetsdk avnetsdk dhnetsdk zmq jvtsdk npcmpimontsp_x64 XNetSDK  NetDEVSDK rt )
+set(CMAKE_CXX_STANDARD 11)
+
+#set(CMAKE_CXX_COMPILER "clang++")
+
+
+add_executable(facepics main.cpp global.cpp protoc/SendPictureProtocol.pb.cc log4cpp/CLog.cpp
+        log4cpp/DailyRollingFileAppender.cpp log4cpp/PortabilityImpl.cpp from_server_info.cpp
+        hikvision/HCCamera.cpp CCameras.cpp double_list/list.h dahua/DHCamera.cpp
+        double_list/ListThread.cpp double_list/ListOperation.cpp double_list/SendQueue.cpp jvt/VideoNetAPI.h
+        jvt/JVTCamera.cpp kuangshi/KSCamera.cpp NETDEV/NetDEVSDK.h NETDEV/NetDev.cpp
+        tinyxml/tinystr.cpp tinyxml/tinyxml.cpp tinyxml/tinyxmlerror.cpp tinyxml/tinyxmlparser.cpp
+        receive_car/CReceiveCar.cpp CBase64.cpp ${SOURCE_FILES})
+
+#target_link_libraries(FacePictureClient jpeg)
+target_link_libraries(facepics libopencv_core.so libopencv_highgui.so libopencv_imgproc.so)
+
+target_link_libraries(facepics ${EXTRA_LIBS} ${EXTRA_LIBS_RECEIVE})
+
+
+add_executable(test_julong test_julong_new.cpp)
+target_link_libraries(test_julong ${EXTRA_LIBS} ${EXTRA_LIBS_RECEIVE})
+

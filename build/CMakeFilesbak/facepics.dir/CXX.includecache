@@ -1,0 +1,754 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/CBase64.cpp
+CBase64.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/CBase64.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/CBase64.h
+string
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/CCameras.cpp
+global.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/global.h
+CCameras.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/CCameras.h
+boost/filesystem/operations.hpp
+-
+dirent.h
+-
+hikvision/HCCamera.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/hikvision/HCCamera.h
+dahua/DHCamera.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/dahua/DHCamera.h
+jvt/JVTCamera.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/jvt/JVTCamera.h
+kuangshi/KSCamera.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/kuangshi/KSCamera.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/CCameras.h
+thread
+-
+receive_car/CReceiveCar.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/receive_car/CReceiveCar.h
+double_list/SendQueue.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/double_list/SendQueue.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/dahua/DHCamera.cpp
+DHCamera.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/dahua/DHCamera.h
+../CCameras.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/CCameras.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/dahua/DHCamera.h
+dhnetsdk.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/dahua/dhnetsdk.h
+../global.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/global.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/dahua/dhnetsdk.h
+windows.h
+-
+objc/objc.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/dahua/objc/objc.h
+../Platform/osIndependent.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/Platform/osIndependent.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/double_list/ListOperation.cpp
+ListOperation.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/double_list/ListOperation.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/double_list/ListOperation.h
+boost/thread/mutex.hpp
+-
+opencv2/core/types_c.h
+-
+list.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/double_list/list.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/double_list/ListThread.cpp
+ListThread.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/double_list/ListThread.h
+../log4cpp/CLog.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/log4cpp/CLog.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/double_list/ListThread.h
+ListOperation.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/double_list/ListOperation.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/double_list/SendQueue.cpp
+opencv2/opencv.hpp
+-
+boost/filesystem.hpp
+-
+SendQueue.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/double_list/SendQueue.h
+../receive_picture/ReceivePicture.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/receive_picture/ReceivePicture.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/double_list/SendQueue.h
+boost/thread/thread.hpp
+-
+../global.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/global.h
+../from_server_info.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/from_server_info.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/double_list/list.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/from_server_info.cpp
+boost/lexical_cast.hpp
+-
+boost/uuid/uuid_io.hpp
+-
+boost/uuid/uuid_generators.hpp
+-
+from_server_info.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/from_server_info.h
+global.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/global.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/from_server_info.h
+iostream
+-
+protoc/SendPictureProtocol.pb.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/protoc/SendPictureProtocol.pb.h
+boost/bind.hpp
+-
+boost/asio.hpp
+-
+boost/thread.hpp
+-
+proto_ss/outquery_window.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/outquery_window.h
+proto_ss/inquery.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/inquery.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/global.cpp
+global.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/global.h
+boost/lexical_cast.hpp
+-
+boost/uuid/uuid_io.hpp
+-
+boost/uuid/uuid_generators.hpp
+-
+iconv.h
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/global.h
+string.h
+-
+tcp_conf_handle.h
+-
+rapidjson/rapidjson.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/rapidjson.h
+rapidjson/document.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/document.h
+rapidjson/filereadstream.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/filereadstream.h
+double_list/ListThread.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/double_list/ListThread.h
+log4cpp/CLog.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/log4cpp/CLog.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/hikvision/GeneralDef.h
+HCNetSDK.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/hikvision/HCNetSDK.h
+LinuxPlayM4.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/hikvision/LinuxPlayM4.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/hikvision/HCCamera.cpp
+cstdio
+-
+fstream
+-
+cstring
+-
+HCCamera.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/hikvision/HCCamera.h
+../tinyxml/tinyxml.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/tinyxml/tinyxml.h
+HCNetSDK.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/hikvision/HCNetSDK.h
+boost/lexical_cast.hpp
+-
+boost/uuid/uuid_io.hpp
+-
+boost/uuid/uuid_generators.hpp
+-
+opencv2/opencv.hpp
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/hikvision/HCCamera.h
+HCNetSDK.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/hikvision/HCNetSDK.h
+GeneralDef.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/hikvision/GeneralDef.h
+../global.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/global.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/hikvision/HCNetSDK.h
+winsock2.h
+-
+windows.h
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/hikvision/LinuxPlayM4.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/jvt/JVTCamera.cpp
+regex
+-
+JVTCamera.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/jvt/JVTCamera.h
+VideoNetAPI.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/jvt/VideoNetAPI.h
+../global.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/global.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/jvt/JVTCamera.h
+../global.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/global.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/jvt/VideoNetAPI.h
+stdio.h
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/kuangshi/KSCamera.cpp
+KSCamera.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/kuangshi/KSCamera.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/kuangshi/KSCamera.h
+../global.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/global.h
+XNetSDK.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/kuangshi/XNetSDK.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/kuangshi/XNetSDK.h
+XNetSDKDefine.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/kuangshi/XNetSDKDefine.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/kuangshi/XNetSDKDefine.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/log4cpp/CLog.cpp
+CLog.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/log4cpp/CLog.h
+log4cpp/PatternLayout.hh
+-
+log4cpp/OstreamAppender.hh
+-
+log4cpp/FileAppender.hh
+-
+log4cpp/Priority.hh
+-
+boost/filesystem/operations.hpp
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/log4cpp/CLog.h
+log4cpp/Category.hh
+-
+DailyRollingFileAppender.hh
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/log4cpp/DailyRollingFileAppender.hh
+iostream
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/log4cpp/DailyRollingFileAppender.cpp
+PortabilityImpl.hh
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/log4cpp/PortabilityImpl.hh
+io.h
+-
+unistd.h
+-
+sys/types.h
+-
+sys/stat.h
+-
+fcntl.h
+-
+DailyRollingFileAppender.hh
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/log4cpp/DailyRollingFileAppender.hh
+log4cpp/Category.hh
+-
+log4cpp/FactoryParams.hh
+-
+memory
+-
+cstdio
+-
+cstring
+-
+cstdlib
+-
+iostream
+-
+sstream
+-
+iomanip
+-
+dirent.h
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/log4cpp/DailyRollingFileAppender.hh
+log4cpp/Portability.hh
+-
+log4cpp/FileAppender.hh
+-
+string
+-
+stdarg.h
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/log4cpp/PortabilityImpl.cpp
+PortabilityImpl.hh
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/log4cpp/PortabilityImpl.hh
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/log4cpp/PortabilityImpl.hh
+log4cpp/Portability.hh
+-
+cstdlib
+-
+cstring
+-
+ctime
+-
+cmath
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/main.cpp
+iostream
+-
+proto_ss/tcp_conf_handle.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/tcp_conf_handle.h
+protoc/SendPictureProtocol.pb.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/protoc/SendPictureProtocol.pb.h
+from_server_info.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/from_server_info.h
+CCameras.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/CCameras.h
+double_list/SendQueue.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/double_list/SendQueue.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/info_query.h
+iostream
+-
+string
+-
+boost/thread.hpp
+-
+boost/pool/object_pool.hpp
+-
+boost/shared_ptr.hpp
+-
+list
+-
+boost/circular_buffer.hpp
+-
+one_message.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/one_message.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/inquery.h
+info_query.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/info_query.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/logcpp.h
+ostream
+-
+streambuf
+-
+string
+-
+syslog.h
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/one_message.h
+string
+-
+tcp_with_conf.pb.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/tcp_with_conf.pb.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/outquery.h
+info_query.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/info_query.h
+tcp_conf_id.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/tcp_conf_id.h
+tcp_with_conf.pb.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/tcp_with_conf.pb.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/outquery_window.h
+outquery.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/outquery.h
+atomic
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/send_buff.h
+logcpp.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/logcpp.h
+iostream
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/tcp_conf_handle.h
+cstdlib
+-
+string
+-
+iostream
+-
+boost/bind.hpp
+-
+boost/asio.hpp
+-
+boost/thread.hpp
+-
+boost/asio/ssl.hpp
+-
+boost/asio/ssl/context.hpp
+-
+boost/smart_ptr.hpp
+-
+vector
+-
+boost/date_time/posix_time/posix_time.hpp
+-
+tcp_with_conf.pb.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/tcp_with_conf.pb.h
+inquery.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/inquery.h
+outquery_window.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/outquery_window.h
+tcp_conf_id.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/tcp_conf_id.h
+send_buff.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/send_buff.h
+logcpp.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/logcpp.h
+boost/timer.hpp
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/tcp_conf_id.h
+tcp_with_conf.pb.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/tcp_with_conf.pb.h
+iostream
+-
+atomic
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/proto_ss/tcp_with_conf.pb.h
+string
+-
+google/protobuf/stubs/common.h
+-
+google/protobuf/generated_message_util.h
+-
+google/protobuf/message.h
+-
+google/protobuf/repeated_field.h
+-
+google/protobuf/extension_set.h
+-
+google/protobuf/generated_enum_reflection.h
+-
+google/protobuf/unknown_field_set.h
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/protoc/SendPictureProtocol.pb.cc
+SendPictureProtocol.pb.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/protoc/SendPictureProtocol.pb.h
+algorithm
+-
+google/protobuf/stubs/common.h
+-
+google/protobuf/stubs/once.h
+-
+google/protobuf/io/coded_stream.h
+-
+google/protobuf/wire_format_lite_inl.h
+-
+google/protobuf/descriptor.h
+-
+google/protobuf/generated_message_reflection.h
+-
+google/protobuf/reflection_ops.h
+-
+google/protobuf/wire_format.h
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/protoc/SendPictureProtocol.pb.h
+string
+-
+google/protobuf/stubs/common.h
+-
+google/protobuf/generated_message_util.h
+-
+google/protobuf/message.h
+-
+google/protobuf/repeated_field.h
+-
+google/protobuf/extension_set.h
+-
+google/protobuf/generated_enum_reflection.h
+-
+google/protobuf/unknown_field_set.h
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/allocators.h
+rapidjson.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/rapidjson.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/document.h
+reader.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/reader.h
+internal/meta.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/meta.h
+internal/strfunc.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/strfunc.h
+memorystream.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/memorystream.h
+encodedstream.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/encodedstream.h
+new
+-
+limits
+-
+iterator
+-
+utility
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/encodedstream.h
+stream.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/stream.h
+memorystream.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/memorystream.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/encodings.h
+rapidjson.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/rapidjson.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/error/error.h
+../rapidjson.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/rapidjson.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/filereadstream.h
+stream.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/stream.h
+cstdio
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/biginteger.h
+../rapidjson.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/rapidjson.h
+intrin.h
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/diyfp.h
+../rapidjson.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/rapidjson.h
+limits
+-
+intrin.h
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/ieee754.h
+../rapidjson.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/rapidjson.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/meta.h
+../rapidjson.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/rapidjson.h
+type_traits
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/pow10.h
+../rapidjson.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/rapidjson.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/stack.h
+../allocators.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/allocators.h
+swap.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/swap.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/strfunc.h
+../stream.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/stream.h
+cwchar
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/strtod.h
+ieee754.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/ieee754.h
+biginteger.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/biginteger.h
+diyfp.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/diyfp.h
+pow10.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/pow10.h
+climits
+-
+limits
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/swap.h
+../rapidjson.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/rapidjson.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/memorystream.h
+stream.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/stream.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/msinttypes/inttypes.h
+stdint.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/msinttypes/stdint.h
+inttypes.h
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/msinttypes/stdint.h
+stdint.h
+-
+limits.h
+-
+wchar.h
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/rapidjson.h
+cstdlib
+-
+cstring
+-
+rapidjson/...
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/rapidjson/...
+string
+-
+msinttypes/stdint.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/msinttypes/stdint.h
+msinttypes/inttypes.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/msinttypes/inttypes.h
+stdint.h
+-
+inttypes.h
+-
+endian.h
+-
+rapidjson/...
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/rapidjson/...
+cassert
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/reader.h
+allocators.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/allocators.h
+stream.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/stream.h
+encodedstream.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/encodedstream.h
+internal/meta.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/meta.h
+internal/stack.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/stack.h
+internal/strtod.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/internal/strtod.h
+limits
+-
+intrin.h
+-
+nmmintrin.h
+-
+emmintrin.h
+-
+arm_neon.h
+-
+stdexcept
+-
+rapidjson/error/error.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/rapidjson/error/error.h
+rapidjson/reader.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/rapidjson/reader.h
+error/error.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/error/error.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/stream.h
+rapidjson.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/rapidjson.h
+encodings.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/rapidjson/encodings.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/receive_car/CReceiveCar.cpp
+CReceiveCar.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/receive_car/CReceiveCar.h
+../CBase64.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/CBase64.h
+../log4cpp/CLog.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/log4cpp/CLog.h
+../global.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/global.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/receive_car/CReceiveCar.h
+zmq.h
+-
+boost/thread.hpp
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/receive_picture/ReceivePicture.h
+string
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/tinyxml/tinystr.cpp
+tinystr.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/tinyxml/tinystr.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/tinyxml/tinystr.h
+assert.h
+-
+string.h
+-
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/tinyxml/tinyxml.cpp
+ctype.h
+-
+sstream
+-
+iostream
+-
+tinyxml.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/tinyxml/tinyxml.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/tinyxml/tinyxml.h
+ctype.h
+-
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+assert.h
+-
+string
+-
+iostream
+-
+sstream
+-
+tinystr.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/tinyxml/tinystr.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/tinyxml/tinyxmlerror.cpp
+tinyxml.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/tinyxml/tinyxml.h
+
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/tinyxml/tinyxmlparser.cpp
+ctype.h
+-
+stddef.h
+-
+tinyxml.h
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/tinyxml/tinyxml.h
+windows.h
+-
+

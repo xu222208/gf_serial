@@ -1,0 +1,874 @@
+
+#include "../global.h"
+#include "NetDEVSDK.h"
+#include "NetDev.h"
+
+//存储登录相机IP地址和登录ID
+map<LPVOID, string> g_NETDEVandIDAndIP;
+//定义全局队列，用来存储文件信息
+map<int, NETDEV_USELISTTIMER> g_pUselistBuffer_NETDEV;
+
+
+
+
+void NetDevCamera::Ondestroy() {
+    if ((LPVOID)m_lHandle > 0) {
+        //停止接收图片信息
+        //NETDEV_StopRealPlay(m_lHandle);
+    }
+
+    if ((LPVOID)m_lUserID > 0) {
+        //退出登录
+        NETDEV_Logout(m_lUserID);
+    }
+    printf("NETDEV_Cleanup\n");
+    //清理资源
+    NETDEV_Cleanup();
+}
+
+
+
+NetDevCamera::~NetDevCamera() {
+    Ondestroy();
+}
+
+
+
+NetDevCamera::NetDevCamera(const char *cCameraIP,const int nPort,const char *cUserName,const char *cPassword)
+        : //m_lUserID(-1),
+         // m_lHandle(-1),
+          m_strCameraIP(cCameraIP),
+          m_nPort(nPort),
+          m_cUserName(cUserName),
+          m_cPassword(cPassword)
+          {
+        SetCameraInit(OnInitCamera(cCameraIP, nPort, cUserName, cPassword));
+}
+
+
+//void  cbPlayDataCallBack(LPVOID lg_NETDEVandIDAndIPpPlayHandle,const BYTE *pucBuffer,INT32 dwBufSize,INT32 dwMediaDataType,LPVOID lpUserParam)
+//{
+//
+//
+//}
+
+//
+//
+//void * cbFaceSnapshotCallBack(LPVOID lpUserID,LPNETDEV_TMS_FACE_SNAPSHOT_PIC_INFO_S pstFaceSnapShotData,LPVOID lpUserData)
+//{
+//    logInfo("cbFaceSnapshotCallBack   enter\n");
+//    LPNETDEV_TMS_FACE_SNAPSHOT_PIC_INFO_S  pic_pstFaceSnapShotData=(LPNETDEV_TMS_FACE_SNAPSHOT_PIC_INFO_S)pstFaceSnapShotData;
+//    if(pic_pstFaceSnapShotData->udwPicBuffLen>0&&NULL!=pic_pstFaceSnapShotData->pcPicBuff) {
+//        int nGroupId = pic_pstFaceSnapShotData->udwFaceId;
+//        char buf[100] = {0};
+//        string strIP = g_NETDEVandIDAndIP[lpUserID];
+//        sprintf(buf, "%s:picture receive!", strIP.c_str());
+//        logInfo(buf);
+//        auto iter = g_pUselistBuffer_NETDEV.find(nGroupId);
+//        if (iter != g_pUselistBuffer_NETDEV.end()) {
+//            NETDEV_USELISTTIMER uselisttimer = iter->second;
+//            //获取已存在信息
+//            if (uselisttimer.plistBuffer) {
+//                int nTempPicLen = uselisttimer.plistBuffer->camerasPic.nBackgroundPicLen;
+//                //获取场景图标识（1：全景；2人脸）
+//                //人脸
+//                if (pic_pstFaceSnapShotData->enImgType == 2) {
+//                    uselisttimer.plistBuffer->camerasPic.nFacePicLen = pic_pstFaceSnapShotData->udwPicBuffLen;
+//                    g_pListThread->CheckBuffer(pic_pstFaceSnapShotData->udwPicBuffLen + 1, FACE_PIC_TAG,
+//                                               uselisttimer.plistBuffer);
+//                    memcpy(uselisttimer.plistBuffer->camerasPic.pFaceBuffer, pic_pstFaceSnapShotData->pcPicBuff,
+//                           pic_pstFaceSnapShotData->udwPicBuffLen);
+//                } else if (pic_pstFaceSnapShotData->enImgType == 1)   //背景
+//                {
+//                    //图片长度
+//                    uselisttimer.plistBuffer->camerasPic.nBackgroundPicLen = pic_pstFaceSnapShotData->udwPicBuffLen;
+//                    //检查内存是否符合大小
+//                    g_pListThread->CheckBuffer(pic_pstFaceSnapShotData->udwPicBuffLen + 1, BAKE_PIC_TAG,
+//                                               uselisttimer.plistBuffer);
+//                    //拷贝图片内存
+//                    memcpy(uselisttimer.plistBuffer->camerasPic.pBackBuffer, pic_pstFaceSnapShotData->pcPicBuff,
+//                           pic_pstFaceSnapShotData->udwPicBuffLen);
+//                }
+//
+//                //插入NETDEV_GetLastError缓存队列时间
+//                uselisttimer.plistBuffer->camerasPic.tProgramTime = time(0);
+//                //放入满队列
+//                g_pListThread->PutBuffer(uselisttimer.plistBuffer, full);
+//                g_pUselistBuffer_NETDEV.erase(nGroupId);
+//
+//                sprintf(buf, "%s:picture inster double list!", strIP.c_str());
+//                logInfo(buf);
+//
+//            }
+//
+//
+//        } else {
+//            //获取系统时间
+//            time_t t = time(NULL);
+//            NETDEV_USELISTTIMER uselisttimer;
+//            //若10秒还未收到数据,删除队列
+//            uselisttimer.nTimer = t + 10;
+//            //PLIST_BUFFER plistBuffer;
+//            g_pListThread->GetBuffer(&uselisttimer.plistBuffer, empty);
+//            if (uselisttimer.plistBuffer == nullptr) {
+//                //若空队列为空,获取满队列头地址AutoConnectFunc
+//                logDebug("The dh data is full and the original data is discarded!");
+//                //g_pListThread->GetHeadBuffer(&plistBuffer, full);
+//                g_pListThread->GetBuffer(&uselisttimer.plistBuffer, full);
+//                //获取内存图片并保存
+//                //SaveFaceFile(uselisttimer.plistBuffer, DAHUA);camerastt
+//            }
+//            if (uselisttimer.plistBuffer) {
+//                string strTime = pic_pstFaceSnapShotData->szPassTime;
+//                char cYear[4] = {0};
+//                char cMonth[2] = {0};
+//                char cDay[2] = {0};
+//                char cHour[2] = {0};
+//                char cMinute[2] = {0};
+//                char cSecond[2] = {0};
+//                //char cMilsecond[3]={0};
+//                memcpy(cYear, &pic_pstFaceSnapShotData->szPassTime[0], 4);
+//                memcpy(cMonth, &pic_pstFaceSnapShotData->szPassTime[4], 2);
+//                memcpy(cDay, &pic_pstFaceSnapShotData->szPassTime[6], 2);
+//                memcpy(cHour, &pic_pstFaceSnapShotData->szPassTime[8], 2);
+//                memcpy(cMinute, &pic_pstFaceSnapShotData->szPassTime[10], 2);
+//                memcpy(cSecond, &pic_pstFaceSnapShotData->szPassTime[12], 2);
+//                //memcpy(cMilsecond, &pic_pstFaceSnapShotData->szPassTime[14], 3);
+//                DVR_TIME dvrTime;
+//                dvrTime.nYear = atoi(cYear);
+//                dvrTime.nMonth = atoi(cMonth);
+//                dvrTime.nDay = atoi(cDay);
+//                dvrTime.nHour = atoi(cHour);
+//                dvrTime.nMinute = atoi(cMinute);
+//                dvrTime.nSecond = atoi(cSecond);
+//                uselisttimer.plistBuffer->camerasPic.nCamerasType = NETDEV;
+//                uselisttimer.plistBuffer->camerasPic.tCameraTime = strTime2unix(dvrTime);
+//                //获取场景图标识（1：全景；2人脸）NETDEV_Cleanup
+//                //人脸
+//                if (pic_pstFaceSnapShotData->enImgType == 2) {
+//                    uselisttimer.plistBuffer->camerasPic.nFacePicLen = pic_pstFaceSnapShotData->udwPicBuffLen;
+//                    g_pListThread->CheckBuffer(pic_pstFaceSnapShotData->udwPicBuffLen + 1, FACE_PIC_TAG,
+//                                               uselisttimer.plistBuffer);
+//                    memcpy(uselisttimer.plistBuffer->camerasPic.pFaceBuffer, pic_pstFaceSnapShotData->pcPicBuff,
+//                           pic_pstFaceSnapShotData->udwPicBuffLen);
+//                } else if (pic_pstFaceSnapShotData->enImgType == 1)   //背景
+//                {
+//                    //图片长度
+//                    uselisttimer.plistBuffer->camerasPic.nBackgroundPicLen = pic_pstFaceSnapShotData->udwPicBuffLen;
+//                    //检查内存是否符合大小
+//                    g_pListThread->CheckBuffer(pic_pstFaceSnapShotData->udwPicBuffLen + 1, BAKE_PIC_TAG,
+//                                               uselisttimer.plistBuffer);
+//                    //拷贝图片内存
+//                    memcpy(uselisttimer.plistBuffer->camerasPic.pBackBuffer, pic_pstFaceSnapShotData->pcPicBuff,
+//                           pic_pstFaceSnapShotData->udwPicBuffLen);
+//
+//                }
+//                //清空IP地址
+//                memset(uselisttimer.plistBuffer->camerasPic.cCameraIP, 0, 16);
+//
+//
+//                //IP地址
+//                memcpy(uselisttimer.plistBuffer->camerasPic.cCameraIP, strIP.c_str(), strIP.length());
+//                //人脸评分
+//                uselisttimer.plistBuffer->camerasPic.nFaceScore = 70;
+//
+//                //获取告警NETDEV_GetLastError区域坐标
+//                uselisttimer.plistBuffer->camerasPic.sAlarmRect_JVT.nX = pic_pstFaceSnapShotData->stFacePos.dwTopLeftX;
+//                uselisttimer.plistBuffer->camerasPic.sAlarmRect_JVT.nY = pic_pstFaceSnapShotData->stFacePos.dwTopLeftY;
+//                uselisttimer.plistBuffer->camerasPic.sAlarmRect_JVT.nWidth =  pic_pstFaceSnapShotData->stFacePos.dwBottomRightX;
+//                uselisttimer.plistBuffer->camerasPic.sAlarmRect_JVT.nHeight = pic_pstFaceSnapShotData->stFacePos.dwBottomRightY;
+//            }
+//
+//            g_pUselistBuffer_NETDEV.insert(make_pair(nGroupId, uselisttimer));
+//        }
+//    }
+//    return 0;
+//}
+//void *    cbCarPlateCallBack(LPVOID lpUserID,LPNETDEV_TMS_CAR_PLATE_INFO_S pstCarPlateData,LPVOID lpUserData)
+//{
+//
+//}
+
+//void NetDevCamera::reconnCamera() {
+//        m_isFirstLog = false;
+//        bool isRun = true;
+//        //清空资源
+//        Ondestroy();
+//        while (isRun) {
+//            //断线重连,10秒钟一次
+//            if (OnInitCamera(m_strCameraIP.c_str(), m_nPort, m_cUserName, m_cPassword)) {
+//                isRun = false;
+//            }
+//            sleep(10);
+//        }
+//    }
+//
+//void *    cbAlarmMessCallBack(LPVOID lpUserID,INT32 dwChannelID,NETDEV_ALARM_INFO_S  stAlarminfo,LPVOID lpBuf,INT32 dwBufLen,LPVOID lpUserData)
+//    {
+//        logInfo("cbAlarmMessCallBack!\n");
+//        int getError = NETDEV_GetLastError();
+//        printf("NETDEV_init NETDEV_GetLastError = %d",getError);
+//         if(stAlarminfo.dwAlarmType=NETDEV_ALARM_NET_OFF){
+//             NetDevCamera *lpUser=(NetDevCamera *)lpUserData;
+//             lpUser->reconnCamera();
+//         }
+//
+//
+//    }
+
+
+//void *cbFaceAlarmMessCallBack( LPVOID lpUserID,
+//                               LPNETDEV_FACE_RECORD_SNAPSHOT_INFO_S pstFaceAlarmReportInfo,
+//                               LPVOID    lpBuf,
+//                               INT32     dwBufLen,
+//                               LPVOID    lpUserData)
+//{
+//    printf("cbFaceAlarmMessCallBack\n");
+//
+// }
+#if  0
+bool NetDevCamera::OnInitCamera(const char *cDeviceAddress, const unsigned short wPort, const char *cUserName,
+    const char *cPassword)
+    {
+        bool ret;
+        ret=NETDEV_Init();
+        if(ret!=true)
+        {
+           logError("NETDEV_init error!");
+           int getError = NETDEV_GetLastError();
+           printf("NETDEV_init NETDEV_GetLastError = %d",getError);
+           NETDEV_Cleanup();
+           return false;
+        }
+
+
+
+        printf("=======\n");
+
+        LPNETDEV_SELOG_INFO_S OUTPara;
+
+        NETDEV_DEVICE_LOGIN_INFO_S  tpstDevLogininfo;
+
+        int nError = 0;
+        char cAddress[260] = {0};
+        char cName[132] = {0};
+        char cPasswordNew[128] = {0};
+        memset((void *)tpstDevLogininfo.szIPAddr,0,260);
+        memset((void *)tpstDevLogininfo.szUserName,0,132);
+        memset((void *)tpstDevLogininfo.szPassword,0,128);
+
+
+        memcpy(tpstDevLogininfo.szIPAddr, cDeviceAddress, 260);
+        memcpy(tpstDevLogininfo.szUserName, cUserName, 132);
+        memcpy(tpstDevLogininfo.szPassword, cPassword, 128);
+        tpstDevLogininfo.dwPort=wPort;
+        tpstDevLogininfo.dwLoginProto=0;/*0代表以ONVIF协议接入，1代表以私有协议接入*/
+        tpstDevLogininfo.dwDeviceType=0;/*未知*/
+       // tpstDevLogininfo.byRes=0;/*保留*/
+
+
+
+        m_lUserID=NETDEV_Login_V30((LPNETDEV_DEVICE_LOGIN_INFO_S )(&tpstDevLogininfo),(LPNETDEV_SELOG_INFO_S )(&OUTPara));
+        if(m_lUserID==0)
+        {
+            //logError("NETDEV_Login_V30 error!");
+            int getError = NETDEV_GetLastError();
+            printf("NETDEV_Login_V30  NETDEV_GetLastError=%d\n",getError);
+            NETDEV_Cleanup();
+            return false;
+
+        }
+        ret=NETDEV_SetFaceSnapshotCallBack(NULL,(NETDEV_FaceSnapshotCallBack_PF)cbFaceSnapshotCallBack,NULL);
+        printf("ret = %d\n",ret);
+        if(ret!=TRUE)
+        {
+            logError("NETDEV_SetFaceSnapshotCallBack error");
+            int getError = NETDEV_GetLastError();
+            printf("NETDEV_SetFaceSnapshotCallBack NETDEV_GetLastError=%d",getError);
+            NETDEV_Logout(m_lUserID);
+            NETDEV_Cleanup();
+            return false;
+        }
+
+//        printf("m_lUserID=%d=========\n",m_lUserID);
+//        NETDEV_VIDEO_CHL_DETAIL_INFO_S  psVideoChlList[256]={0};
+//        INT32  dwCount =256;
+//        bool bRet=NETDEV_QueryVideoChlDetailList(m_lUserID,&dwCount,psVideoChlList);
+//        for(int i=0;i<256;i++)
+//        {
+//            printf("psVideoChlList[%d].dwChannelID=%d\n",i,psVideoChlList[i].dwChannelID);
+//            printf("psVideoChlList[%d].bPtzSupported=%d\n",i,psVideoChlList[i].bPtzSupported);
+//            printf("psVideoChlList[%d].enStatus=%d\n",i,psVideoChlList[i].enStatus);
+//            printf("psVideoChlList[%d].dwStreamNum=%d\n",i,psVideoChlList[i].dwStreamNum);
+//            printf("psVideoChlList[%d].szChnName=%s\n",i,psVideoChlList[i].szChnName);
+//        }
+//        if(bRet!=TRUE)
+//        {
+//            int getError = NETDEV_GetLastError();
+//            printf("NETDEV_QueryVideoChlDetailList  NETDEV_GetLastError=%d\n",getError);
+//            NETDEV_Cleanup();
+//            return false;
+//        }
+
+
+////        bool retr;
+//        retr=NETDEV_SubscribeSmart(m_lUserID,(LPNETDEV_SUBSCRIBE_SMART_INFO_S)&subscribe_sm,(LPNETDEV_SMART_INFO_S)&smartinf);
+//        printf("retr=%d\n",retr);
+//        if(retr==true)
+//        {
+//            printf("smartinf.udwSubscribeID=%d\n", smartinf.udwSubscribeID);
+//        }
+//        else{
+//            printf("NETDEV_SubscribeSmart  false\n");
+//            NETDEV_Logout(m_lUserID);
+//            NETDEV_Cleanup();
+//            return false;
+//        }
+
+//        printf("pppppppppppppppp\n");
+//
+//
+//        NETDEV_PREVIEWINFO_S  m_NETDEV_PREVIEWINFO_S={0};
+//        m_NETDEV_PREVIEWINFO_S.dwChannelID=1;/*channel id set to 1 ??*/
+//        m_NETDEV_PREVIEWINFO_S.dwStreamType=0;/*主流*/
+//        m_NETDEV_PREVIEWINFO_S.dwLinkMode=1;/*TCP*/
+//        m_NETDEV_PREVIEWINFO_S.hPlayWnd=NULL;/*set to  null*/
+//        m_NETDEV_PREVIEWINFO_S.dwFluency=1;
+//        m_NETDEV_PREVIEWINFO_S.dwStreamMode=NETDEV_STREAM_MODE_VIDEO;
+//        m_NETDEV_PREVIEWINFO_S.dwLiveMode=0;/*0为服务器分发，1为强制分发*/
+//        m_NETDEV_PREVIEWINFO_S.dwDisTributeCloud=2;/*启用宇视分发*/
+//        m_NETDEV_PREVIEWINFO_S.dwallowDistribution=1;/*是否支持分发*/
+//        m_NETDEV_PREVIEWINFO_S.dwTransType=1;/*0为一体机转发，1为下行设备直连*/
+//
+//
+////      printf("this is %d\n",this);
+//        //LPVOID m_lHandle=NETDEV_RealPlay((LPVOID)m_lUserID,(LPNETDEV_PREVIEWINFO_S)(&m_NETDEV_PREVIEWINFO_S),cbPlayDataCallBack,this);
+//      LPVOID  m_lHandle=NETDEV_RealPlay((LPVOID)m_lUserID,(LPNETDEV_PREVIEWINFO_S)(&m_NETDEV_PREVIEWINFO_S),NULL,0);
+//      printf("llllllllllllllllllllll\n");
+//       if(m_lHandle==0)
+//        {
+//            logError("NETDEV_RealPlay error");
+//            int getError = NETDEV_GetLastError();
+//            printf("getError=%d\n", getError);
+//            NETDEV_Logout(m_lUserID);
+//            NETDEV_Cleanup();
+//            return false;
+//        }
+        printf("&&&&&&&&&&&&&&\n");
+        //printf("m_lHandle=%d\n",m_lHandle);
+        if(NETDEV_SetAlarmCallBack(m_lUserID,(NETDEV_AlarmMessCallBack_PF )cbAlarmMessCallBack,this)!=TRUE)
+        {
+            logError("NETDEV_SetAlarmCallBack error");
+            int getError = NETDEV_GetLastError();
+            printf("NETDEV_SetAlarmCallBack NETDEV_GetLastError=%d",getError);
+            NETDEV_Logout(m_lUserID);
+            NETDEV_Cleanup();
+            return false;
+        }
+//        printf("MMMMMMMMMMMMMM\n");
+//        NETDEV_SUBSCRIBE_SMART_INFO_S subscribe_sm ;
+//        subscribe_sm.udwNum=3;//or 3
+//         UINT32 tt;
+//         tt=0;
+//        subscribe_sm.pudwSmartType=&tt;
+//        subscribe_sm.byRes[128]={0};
+//        NETDEV_SMART_INFO_S  smartinf;
+//        printf("NNNNNNNNNNNNNNNNN\n");
+//        bool retr;
+//        retr=NETDEV_SubscribeSmart(m_lUserID,(LPNETDEV_SUBSCRIBE_SMART_INFO_S)&subscribe_sm,(LPNETDEV_SMART_INFO_S)&smartinf);
+//        printf("retr=%d\n",retr);
+//        if(retr==true)
+//        {
+//            printf("smartinf.udwSubscribeID=%d\n", smartinf.udwSubscribeID);
+//        }
+//        else{
+//            printf("NETDEV_SubscribeSmart  false\n");
+//            NETDEV_Logout(m_lUserID);
+//            NETDEV_Cleanup();
+//            return false;
+//        }
+
+
+//        bool rett = NETDEV_SetFaceAlarmCallBack(m_lUserID,(NETDEV_FaceAlarmMessCallBack_PF )cbFaceAlarmMessCallBack,this);
+//        if(rett!=TRUE)
+//        {
+//            printf("NETDEV_SetFaceAlarmCallBack failure\n");
+//        }
+//
+//
+
+
+
+        printf("++++++++++++++++++\n");
+
+//        bool ret=NETDEV_SetCarPlateCallBack(m_lUserID,cbCarPlateCallBack,mlpUserData);
+//        if(ret!=TRUE)
+//        {
+//            logErr("NETDEV_SetCarPlateCallBack error");
+//            int getError = NETDEV_GetLastError();
+//            logError("NETDEV_SetFaceSnapshotCallBack NETDEV_GetLastError=%d",getError);
+//            NETDEV_Cleanup();
+//            return false;
+//        }
+
+
+    if (m_isFirstLog) {
+        //将登录信息保存
+        g_NETDEVandIDAndIP.insert(make_pair(m_lHandle, m_strCameraIP));
+    }
+
+    printf("#################\n");
+    return true;
+
+
+    }
+
+#endif
+
+using namespace std;
+
+//static int g_faceImgCount= 0;
+//
+//static int g_carPlateImgCount = 0;
+//
+//static int g_listenPort = 54000;
+//
+//#define g_szServerIP "192.168.63.130"
+
+
+
+
+void  FaceSnapshotCallBack(LPVOID lpUserID,LPNETDEV_TMS_FACE_SNAPSHOT_PIC_INFO_S pstFaceSnapShotData,LPVOID lpUserData)
+{
+    logInfo("cbFaceSnapshotCallBack   enter\n");
+    LPNETDEV_TMS_FACE_SNAPSHOT_PIC_INFO_S  pic_pstFaceSnapShotData=(LPNETDEV_TMS_FACE_SNAPSHOT_PIC_INFO_S)pstFaceSnapShotData;
+    if(pic_pstFaceSnapShotData->udwPicBuffLen>0&&NULL!=pic_pstFaceSnapShotData->pcPicBuff) {
+        int nGroupId = pic_pstFaceSnapShotData->udwFaceId;
+        char buf[100] = {0};
+        string strIP = g_NETDEVandIDAndIP[lpUserID];
+        sprintf(buf, "%s:picture receive!", strIP.c_str());
+        logInfo(buf);
+        auto iter = g_pUselistBuffer_NETDEV.find(nGroupId);
+        if (iter != g_pUselistBuffer_NETDEV.end()) {
+            NETDEV_USELISTTIMER uselisttimer = iter->second;
+            //获取已存在信息
+            if (uselisttimer.plistBuffer) {
+                int nTempPicLen = uselisttimer.plistBuffer->camerasPic.nBackgroundPicLen;
+                //获取场景图标识（1：全景；2人脸）
+                //人脸
+                if (pic_pstFaceSnapShotData->enImgType == 2) {
+                    uselisttimer.plistBuffer->camerasPic.nFacePicLen = pic_pstFaceSnapShotData->udwPicBuffLen;
+                    g_pListThread->CheckBuffer(pic_pstFaceSnapShotData->udwPicBuffLen + 1, FACE_PIC_TAG,
+                                               uselisttimer.plistBuffer);
+                    memcpy(uselisttimer.plistBuffer->camerasPic.pFaceBuffer, pic_pstFaceSnapShotData->pcPicBuff,
+                           pic_pstFaceSnapShotData->udwPicBuffLen);
+                } else if (pic_pstFaceSnapShotData->enImgType == 1)   //背景
+                {
+                    //图片长度
+                    uselisttimer.plistBuffer->camerasPic.nBackgroundPicLen = pic_pstFaceSnapShotData->udwPicBuffLen;
+                    //检查内存是否符合大小
+                    g_pListThread->CheckBuffer(pic_pstFaceSnapShotData->udwPicBuffLen + 1, BAKE_PIC_TAG,
+                                               uselisttimer.plistBuffer);
+                    //拷贝图片内存
+                    memcpy(uselisttimer.plistBuffer->camerasPic.pBackBuffer, pic_pstFaceSnapShotData->pcPicBuff,
+                           pic_pstFaceSnapShotData->udwPicBuffLen);
+                }
+
+                //插入NETDEV_GetLastError缓存队列时间
+                uselisttimer.plistBuffer->camerasPic.tProgramTime = time(0);
+                //放入满队列
+                g_pListThread->PutBuffer(uselisttimer.plistBuffer, full);
+                g_pUselistBuffer_NETDEV.erase(nGroupId);
+
+                sprintf(buf, "%s:picture inster double list!", strIP.c_str());
+                logInfo(buf);
+
+            }
+
+
+        } else {
+            //获取系统时间
+            time_t t = time(NULL);
+            NETDEV_USELISTTIMER uselisttimer;
+            //若10秒还未收到数据,删除队列
+            uselisttimer.nTimer = t + 10;
+            //PLIST_BUFFER plistBuffer;
+            g_pListThread->GetBuffer(&uselisttimer.plistBuffer, empty);
+            if (uselisttimer.plistBuffer == nullptr) {
+                //若空队列为空,获取满队列头地址AutoConnectFunc
+                logDebug("The dh data is full and the original data is discarded!");
+                //g_pListThread->GetHeadBuffer(&plistBuffer, full);
+                g_pListThread->GetBuffer(&uselisttimer.plistBuffer, full);
+                //获取内存图片并保存
+                //SaveFaceFile(uselisttimer.plistBuffer, DAHUA);camerastt
+            }
+            if (uselisttimer.plistBuffer) {
+                string strTime = pic_pstFaceSnapShotData->szPassTime;
+                char cYear[4] = {0};
+                char cMonth[2] = {0};
+                char cDay[2] = {0};
+                char cHour[2] = {0};
+                char cMinute[2] = {0};
+                char cSecond[2] = {0};
+                //char cMilsecond[3]={0};
+                memcpy(cYear, &pic_pstFaceSnapShotData->szPassTime[0], 4);
+                memcpy(cMonth, &pic_pstFaceSnapShotData->szPassTime[4], 2);
+                memcpy(cDay, &pic_pstFaceSnapShotData->szPassTime[6], 2);
+                memcpy(cHour, &pic_pstFaceSnapShotData->szPassTime[8], 2);
+                memcpy(cMinute, &pic_pstFaceSnapShotData->szPassTime[10], 2);
+                memcpy(cSecond, &pic_pstFaceSnapShotData->szPassTime[12], 2);
+                //memcpy(cMilsecond, &pic_pstFaceSnapShotData->szPassTime[14], 3);
+                DVR_TIME dvrTime;
+                dvrTime.nYear = atoi(cYear);
+                dvrTime.nMonth = atoi(cMonth);
+                dvrTime.nDay = atoi(cDay);
+                dvrTime.nHour = atoi(cHour);
+                dvrTime.nMinute = atoi(cMinute);
+                dvrTime.nSecond = atoi(cSecond);
+                uselisttimer.plistBuffer->camerasPic.nCamerasType = NETDEV;
+                uselisttimer.plistBuffer->camerasPic.tCameraTime = strTime2unix(dvrTime);
+                //获取场景图标识（1：全景；2人脸）NETDEV_Cleanup
+                //人脸
+                if (pic_pstFaceSnapShotData->enImgType == 2) {
+                    uselisttimer.plistBuffer->camerasPic.nFacePicLen = pic_pstFaceSnapShotData->udwPicBuffLen;
+                    g_pListThread->CheckBuffer(pic_pstFaceSnapShotData->udwPicBuffLen + 1, FACE_PIC_TAG,
+                                               uselisttimer.plistBuffer);
+                    memcpy(uselisttimer.plistBuffer->camerasPic.pFaceBuffer, pic_pstFaceSnapShotData->pcPicBuff,
+                           pic_pstFaceSnapShotData->udwPicBuffLen);
+                } else if (pic_pstFaceSnapShotData->enImgType == 1)   //背景
+                {
+                    //图片长度
+                    uselisttimer.plistBuffer->camerasPic.nBackgroundPicLen = pic_pstFaceSnapShotData->udwPicBuffLen;
+                    //检查内存是否符合大小
+                    g_pListThread->CheckBuffer(pic_pstFaceSnapShotData->udwPicBuffLen + 1, BAKE_PIC_TAG,
+                                               uselisttimer.plistBuffer);
+                    //拷贝图片内存
+                    memcpy(uselisttimer.plistBuffer->camerasPic.pBackBuffer, pic_pstFaceSnapShotData->pcPicBuff,
+                           pic_pstFaceSnapShotData->udwPicBuffLen);
+
+                }
+                //清空IP地址
+                memset(uselisttimer.plistBuffer->camerasPic.cCameraIP, 0, 16);
+
+
+                //IP地址
+                memcpy(uselisttimer.plistBuffer->camerasPic.cCameraIP, strIP.c_str(), strIP.length());
+                //人脸评分
+                uselisttimer.plistBuffer->camerasPic.nFaceScore = 70;
+
+                //获取告警NETDEV_GetLastError区域坐标
+                uselisttimer.plistBuffer->camerasPic.sAlarmRect_JVT.nX = pic_pstFaceSnapShotData->stFacePos.dwTopLeftX;
+                uselisttimer.plistBuffer->camerasPic.sAlarmRect_JVT.nY = pic_pstFaceSnapShotData->stFacePos.dwTopLeftY;
+                uselisttimer.plistBuffer->camerasPic.sAlarmRect_JVT.nWidth =  pic_pstFaceSnapShotData->stFacePos.dwBottomRightX;
+                uselisttimer.plistBuffer->camerasPic.sAlarmRect_JVT.nHeight = pic_pstFaceSnapShotData->stFacePos.dwBottomRightY;
+            }
+
+            g_pUselistBuffer_NETDEV.insert(make_pair(nGroupId, uselisttimer));
+        }
+    }
+
+}
+
+bool NetDevCamera::OnInitCamera(const char *cDeviceAddress, const unsigned short wPort, const char *cUserName,
+                                const char *cPassword)
+{
+    printf("=======OnInitCamera:start=======\n");
+
+    BOOL isSuccess = NETDEV_Init();
+    if (!isSuccess)
+    {
+        printf("NETDEV_Init Failed errcode(%d)\n",NETDEV_GetLastError());
+        return -1;
+    }
+
+    char pszDevIP[128];
+    INT16 wDevPort = 0;
+    char pszUserName[128];
+    char pszPassword[128];
+
+    memset(pszDevIP, 0, 128);
+    memset(pszUserName, 0, 128);
+    memset(pszPassword, 0, 128);
+
+    printf("Please Input IP:");
+    scanf("%s",pszDevIP);
+
+    printf("Please Input Port:");
+    scanf("%d",&wDevPort);
+
+    printf("Please Input UserName:");
+    scanf("%s",pszUserName);
+
+    printf("Please Input Password:");
+    scanf("%s",pszPassword);
+
+    printf("You Input Login Info Is (%s:%d:%s:%s)\n", pszDevIP, wDevPort, pszUserName, pszPassword);
+
+    NETDEV_DEVICE_INFO_S stDevInfo;
+    memset(&stDevInfo, 0, sizeof(stDevInfo));
+
+    isSuccess = NETDEV_SetFaceSnapshotCallBack(NULL, FaceSnapshotCallBack, NULL);
+    if (!isSuccess)
+    {
+        printf("NETDEV_SetFaceSnapshotCallBack Failed errcode(%d)\n",NETDEV_GetLastError());
+    }
+
+//    isSuccess = NETDEV_SetCarPlateCallBack(NULL, CarPlateCallBack, NULL);
+//    if (!isSuccess)
+//    {
+//        printf("NETDEV_SetCarPlateCallBack Failed errcode(%d)\n",NETDEV_GetLastError());
+//    }
+
+    NETDEV_SetListenPort(1,g_listenPort);
+
+    LPVOID pUserID = NETDEV_Login(pszDevIP, wDevPort, pszUserName, pszPassword, &stDevInfo);
+    if(pUserID != NULL)
+    {
+        printf("Login Success\n");
+        INT32 dwBytesReturned = 0;
+        NETDEV_PHOTO_SERVER_CFG_INFO_LIST stPhotoServerInfoList = {0};
+        isSuccess = NETDEV_GetDevConfig(pUserID, 1, NETDEV_GET_PHOTO_SERVER_INFO, &stPhotoServerInfoList, sizeof(NETDEV_PHOTO_SERVER_CFG_INFO_LIST), &dwBytesReturned);
+        if(!isSuccess)
+        {
+            printf("NETDEV_GET_PHOTO_SERVER_INFO  Failed errcode(%d)\n",NETDEV_GetLastError());
+        }
+        else
+        {
+            printf("NETDEV_GET_PHOTO_SERVER_INFO  success \n");
+
+            stPhotoServerInfoList.udwNum = 1;
+            stPhotoServerInfoList.astPhotoServerList[0].udwProtocol = NETDEV_PHOTO_SERVER_PRO_TYPE_PRO2;
+            stPhotoServerInfoList.astPhotoServerList[0].udwPort = g_listenPort;
+            strncpy(stPhotoServerInfoList.astPhotoServerList[0].szIPV4Address, g_szServerIP, sizeof(stPhotoServerInfoList.astPhotoServerList[0].szIPV4Address) - 1);
+
+            isSuccess = NETDEV_SetDevConfig(pUserID, 1, NETDEV_SET_PHOTO_SERVER_INFO, &stPhotoServerInfoList, sizeof(NETDEV_PHOTO_SERVER_CFG_INFO_LIST));
+            if(!isSuccess)
+            {
+                printf("NETDEV_SET_PHOTO_SERVER_INFO  Failed errcode(%d)\n",NETDEV_GetLastError());
+            }
+            else
+            {
+                printf("NETDEV_SET_PHOTO_SERVER_INFO  success \n");
+            }
+
+
+        }
+    }
+    else
+    {
+        printf("NETDEV_Login Failed errcode(%d)\n",NETDEV_GetLastError());
+        return -1;
+    }
+
+    while(1)
+    {
+        sleep(5);
+        printf("g_faceImgCount:%d, g_carPlateImgCount:%d \n",g_faceImgCount,g_carPlateImgCount);
+    }
+
+
+    printf("=======main:end=======\n");
+    return 0;
+}
+
+
+
+/*
+
+void FaceSnapshotCallBack(LPVOID lpUserID, LPNETDEV_TMS_FACE_SNAPSHOT_PIC_INFO_S pstFaceSnapShotData,LPVOID lpUserData)
+{
+    printf("======\n");
+    if (pstFaceSnapShotData != NULL)
+    {
+        printf(" FaceSnapshotCallBack szIPAddr(%s): udwFaceId(%d) enImgType(%d) \n enImgFormat(%d) stFacePos(%d:%d:%d:%d) w:h(%d:%d) \
+			   szCamerID(%s) \n szRecordID(%s) szTollgateID(%s) szPassTime(%s)\n",
+               pstFaceSnapShotData->szIPAddr,
+               pstFaceSnapShotData->udwFaceId,
+               pstFaceSnapShotData->enImgType,
+               pstFaceSnapShotData->enImgFormat,
+               pstFaceSnapShotData->stFacePos.dwBottomRightX,
+               pstFaceSnapShotData->stFacePos.dwBottomRightY,
+               pstFaceSnapShotData->stFacePos.dwTopLeftX,
+               pstFaceSnapShotData->stFacePos.dwTopLeftY,
+               pstFaceSnapShotData->udwImageWidth,
+               pstFaceSnapShotData->udwImageHeight,
+               pstFaceSnapShotData->szCamerID,
+               pstFaceSnapShotData->szRecordID,
+               pstFaceSnapShotData->szTollgateID,
+               pstFaceSnapShotData->szPassTime
+        );
+
+        FILE *fp = NULL;
+        char pFileName[256] = {0};
+        sprintf(pFileName,"%s_%s_%d_%s_%s.jpg",
+                pstFaceSnapShotData->szIPAddr,
+                pstFaceSnapShotData->szCamerID,
+                pstFaceSnapShotData->udwFaceId,
+                pstFaceSnapShotData->szRecordID,
+                pstFaceSnapShotData->szPassTime
+        );
+
+        fp = fopen(pFileName, "wb+");
+        if (NULL != fp)
+        {
+            fwrite(pstFaceSnapShotData->pcPicBuff, pstFaceSnapShotData->udwPicBuffLen,1,fp);
+            fclose(fp);
+        }
+
+
+        g_faceImgCount++;
+    }
+    else
+    {
+        printf("FaceSnapshotCallBack pstFaceSnapShotData Is NULL\n");
+    }
+}
+*/
+/*
+void CarPlateCallBack(IN LPVOID lpUserID, IN LPNETDEV_TMS_CAR_PLATE_INFO_S pstCarPlateData, IN LPVOID lpUserData)
+{
+    if (pstCarPlateData != NULL)
+    {
+        printf(" CarPlateCallBack szIPAddr(%s): udwPicNum(%d) szCamID(%s) szRecordID(%s) szTollgateID(%s) \
+			   szPassTime(%s) szLaneID(%s) szCarPlate(%s)\n",
+               pstCarPlateData->szIPAddr,
+               pstCarPlateData->udwPicNum,
+               pstCarPlateData->stTmsXmlInfo.szCamID,
+               pstCarPlateData->stTmsXmlInfo.szRecordID,
+               pstCarPlateData->stTmsXmlInfo.szTollgateID,
+               pstCarPlateData->stTmsXmlInfo.szPassTime,
+               pstCarPlateData->stTmsXmlInfo.szLaneID,
+               pstCarPlateData->stTmsXmlInfo.szCarPlate
+        );
+
+        for(int i = 0; i < pstCarPlateData->udwPicNum; i++)
+        {
+            FILE *fp = NULL;
+            char pFileName[256] = {0};
+            sprintf(pFileName,"%s_%s_%s_%s_%s_%s_%s_%d.jpg",
+                 main   pstCarPlateData->szIPAddr,
+                    pstCarPlateData->stTmsXmlInfo.szCamID,
+                    pstCarPlateData->stTmsXmlInfo.szRecordID,
+                    pstCarPlateData->stTmsXmlInfo.szTollgateID,
+                    pstCarPlateData->stTmsXmlInfo.szPassTime,
+                    pstCarPlateData->stTmsXmlInfo.szLaneID,
+                    pstCarPlateData->stTmsXmlInfo.szCarPlate,
+                    i
+            );
+
+            fp = fopen(pFileName, "wb+");
+            if (NULL != fp)
+            {
+                fwrite(pstCarPlateData->stTmsPicInfo[i].pcPicData, pstCarPlateData->stTmsPicInfo[i].udwPicSize,1,fp);
+                fclose(fp);
+                g_carPlateImgCount++;
+            }
+        }
+    }
+    else
+    {
+        printf("CarPlateCallBack pstFaceSnapShotData Is NULL\n");
+    }
+}
+*/
+//bool NetDevCamera::OnInitCamera(const char *cDeviceAddress, const unsigned short wPort, const char *cUserName,
+//                                const char *cPassword)
+//{
+//    printf("=======main:start=======\n");
+//
+//    BOOL isSuccess = NETDEV_Init();
+//    if (!isSuccess)
+//    {
+//        printf("NETDEV_Init Failed errcode(%d)\n",NETDEV_GetLastError());
+//        return -1;
+//    }
+//
+//    char pszDevIP[128];
+//    INT16 wDevPort = 0;
+//    char pszUserName[128];
+//    char pszPassword[128];
+//
+//    memset(pszDevIP, 0, 128);
+//    memset(pszUserName, 0, 128);
+//    memset(pszPassword, 0, 128);
+//
+//    printf("Please Input IP:");
+//    scanf("%s",pszDevIP);
+//
+//    printf("Please Input Port:");
+//    scanf("%d",&wDevPort);
+//
+//    printf("Please Input UserName:");
+//    scanf("%s",pszUserName);
+//
+//    printf("Please Input Password:");
+//    scanf("%s",pszPassword);
+//
+//    printf("You Input Login Info Is (%s:%d:%s:%s)\n", pszDevIP, wDevPort, pszUserName, pszPassword);
+//
+//    NETDEV_DEVICE_INFO_S stDevInfo;
+//    memset(&stDevInfo, 0, sizeof(stDevInfo));
+//
+//    isSuccess = NETDEV_SetFaceSnapshotCallBack(NULL, FaceSnapshotCallBack, NULL);
+//    if (!isSuccess)
+//    {
+//        printf("NETDEV_SetFaceSnapshotCallBack Failed errcode(%d)\n",NETDEV_GetLastError());
+//    }
+//
+////    isSuccess = NETDEV_SetCarPlateCallBack(NULL, CarPlateCallBack, NULL);
+////    if (!isSuccess)
+////    {
+////        printf("NETDEV_SetCarPlateCallBack Failed errcode(%d)\n",NETDEV_GetLastError());
+////    }
+//
+//    NETDEV_SetListenPort(1,g_listenPort);
+//
+//    LPVOID pUserID = NETDEV_Login(pszDevIP, wDevPort, pszUserName, pszPassword, &stDevInfo);
+//    if(pUserID != NULL)
+//    {
+//        printf("Login Success\n");
+//        INT32 dwBytesReturned = 0;
+//        NETDEV_PHOTO_SERVER_CFG_INFO_LIST stPhotoServerInfoList = {0};
+//        isSuccess = NETDEV_GetDevConfig(pUserID, 1, NETDEV_GET_PHOTO_SERVER_INFO, &stPhotoServerInfoList, sizeof(NETDEV_PHOTO_SERVER_CFG_INFO_LIST), &dwBytesReturned);
+//        if(!isSuccess)
+//        {
+//            printf("NETDEV_GET_PHOTO_SERVER_INFO  Failed errcode(%d)\n",NETDEV_GetLastError());
+//        }
+//        else
+//        {
+//            printf("NETDEV_GET_PHOTO_SERVER_INFO  success \n");
+//
+//            stPhotoServerInfoList.udwNum = 1;
+//            stPhotoServerInfoList.astPhotoServerList[0].udwProtocol = NETDEV_PHOTO_SERVER_PRO_TYPE_PRO2;
+//            stPhotoServerInfoList.astPhotoServerList[0].udwPort = g_listenPort;
+//            strncpy(stPhotoServerInfoList.astPhotoServerList[0].szIPV4Address, g_szServerIP, sizeof(stPhotoServerInfoList.astPhotoServerList[0].szIPV4Address) - 1);
+//
+//            isSuccess = NETDEV_SetDevConfig(pUserID, 1, NETDEV_SET_PHOTO_SERVER_INFO, &stPhotoServerInfoList, sizeof(NETDEV_PHOTO_SERVER_CFG_INFO_LIST));
+//            if(!isSuccess)
+//            {
+//                printf("NETDEV_SET_PHOTO_SERVER_INFO  Failed errcode(%d)\n",NETDEV_GetLastError());
+//            }
+//            else
+//            {
+//                printf("NETDEV_SET_PHOTO_SERVER_INFO  success \n");
+//            }
+//
+//
+//        }
+//    }
+//    else
+//    {
+//        printf("NETDEV_Login Failed errcode(%d)\n",NETDEV_GetLastError());
+//        return -1;
+//    }
+//
+//    while(1)
+//    {
+//        sleep(5);
+//        printf("g_faceImgCount:%d, g_carPlateImgCount:%d \n",g_faceImgCount,g_carPlateImgCount);
+//    }
+//
+//
+//    printf("=======main:end=======\n");
+//    return 0;
+//}

@@ -1,0 +1,118 @@
+syntax = "proto2";
+
+package PictureProtocol;
+option java_package = "com.bearhunting.picture.protocol";
+option java_outer_classname = "PictureProtocol";
+
+//信息头
+
+message Head {
+    required fixed32 message_size = 1; //随后消息的长度
+    required fixed32 message_type = 2; //随后消息的类型 MessageType
+}
+
+enum MessageType {
+    LOGIN = 10;
+    LOGIN_RESULT = 11;
+    SEND_FACE_MESSAGE = 12;
+    SEND_BACK_MESSAGE = 13;
+    SEND_CAR_MESSAGE = 14;
+    CAMERA_STATUS_MESSAGE = 15;
+}
+
+//相机基本参数
+message CameraMessage {
+    required uint64 camera_id = 1; //相机ID
+    required string camera_ip = 2; //相机IP
+    required uint32 camera_port = 3; //相机端口号
+    required string camera_username = 4; //相机登录用户名
+    required string camera_passowrd = 5; //相机登录密码
+}
+
+// ----------- login --------------
+message Login {
+    required uint64 id = 1;
+    required string username = 2; //登录网关ID
+    required string password = 3; //登录密码
+    required uint32 version = 4; //软件版本号
+    required string os = 5; //操作系统
+}
+
+message LoginResult {
+    enum Flag {
+        ok = 1;
+        fail = 2;
+        update_version = 3;
+    }
+
+    required Flag flag = 1; //登录标识 Flag
+    repeated CameraMessage camera_message = 2; //相机列表信息
+    optional string message = 3;
+}
+
+//---------------change camera information---------
+message ChangeCamera {
+    repeated CameraMessage camera_message = 1; //相机列表信息
+}
+
+// ----------- send message --------------
+
+//发送人脸图片信息
+message SendFaceMessage {
+    required uint64 camera_id = 1; //相机ID
+    required uint32 face_score = 2; //人脸评分
+    required bytes face_contrast_pic = 3; //人脸对比图片
+    optional RectPicture rect_pic_face = 4; //人脸对比图片坐标区域
+    optional bytes face_show_pic = 5; //界面展示人脸图片
+    optional RectPicture rect_pic_show = 6; //界面展示人脸图片坐标区域
+    required uint64 camera_time = 7; //相机抓拍时间
+    required uint64 program_time = 8; //程序推送照片时间
+    required uint64 send_time = 9;
+    required string picture_name = 10; //图片名称(三张图片名称相同,便于对应查找)
+    optional bytes back_pic = 11; //背景图片;
+    optional RectPicture rect_pic_back = 12; //背景图片大小
+}
+
+//发送车牌图片信息
+message SendCarMessage {
+    required uint64 camera_id = 1; //相机ID
+    required uint32 license_score = 2; //车牌评分
+    required string license_plate_num = 3; //车牌号码
+    optional string license_plate_color = 4; //车牌颜色
+    optional string license_car_color = 5; //车辆颜色
+    optional string license_plate_type = 6; //车牌类型
+    required bytes license_plate_pic = 7; //车牌子图
+    optional RectPicture rect_pic_license = 8; //车牌子图对比图片坐标区域
+    required uint64 camera_time = 9; //相机抓拍时间
+    required uint64 program_time = 10; //程序推送照片时间
+    required string picture_name = 11; //图片名称(三张图片名称相同,便于对应查找)
+    optional bytes back_pic = 12; //背景图片;
+    optional RectPicture rect_pic_back = 13; //背景图片大小
+}
+
+//发送背景图片信息
+message SendBackMessage {
+    required uint64 camera_id = 1; //相机ID
+    required bytes back_pic = 2; //背景图片
+    required RectPicture rect_pic_back = 3; //背景图片大小
+    required string picture_name = 4; //图片名称(三张图片名称相同,便于对应查找)
+}
+
+//图片矩形区域
+message RectPicture {
+    required uint32 x = 1; //图片左上角坐标:X
+    required uint32 y = 2; //图片左上角坐标:Y
+    required uint32 width = 3; //图片宽度
+    required uint32 height = 4; //图片高度
+}
+
+//相机状态参数
+message CameraStatus {
+    required uint64 camera_id = 1; //相机ID
+    required bool status = 2; //在线或离线
+}
+
+//相机状态列表
+message CameraStatusList {
+    repeated CameraStatus cameraStatus = 1;
+}

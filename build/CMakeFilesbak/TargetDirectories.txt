@@ -1,0 +1,4 @@
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/build/CMakeFiles/rebuild_cache.dir
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/build/CMakeFiles/facepics.dir
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/build/CMakeFiles/edit_cache.dir
+/home/thh/hxd_projects/gf010 linux16/linux_16/FacePictureClient/build/CMakeFiles/test_julong.dir

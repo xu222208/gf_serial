@@ -1,0 +1,6 @@
+
+#protobuf-compiler 用于编译 protobuf 文件
+sudo apt  install protobuf-compiler
+
+
+sudo apt install liblog4cpp5-dev libprotobuf-dev libssh-dev libboost-thread1.62-dev
