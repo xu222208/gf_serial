@@ -54,6 +54,8 @@ private:
     //设置车牌抓拍发送队列
     void send_cap_queue(const int nThreadID);
 
+    //zmq server
+    void server_queue(const int nThreadID);//xj
     //处理图片并发送
     void OnGetPicToSend(const PLIST_BUFFER plistBuffer, const int nThreadID);
 

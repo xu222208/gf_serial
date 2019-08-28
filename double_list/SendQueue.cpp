@@ -5,6 +5,29 @@
 //#include <jpeglib.h>
 #include <boost/filesystem.hpp>
 #include "SendQueue.h"
+#include <string.h>
+#include <tcp_conf_handle.h>
+#include "../rapidjson/rapidjson.h"
+#include "../rapidjson/document.h"
+#include "../rapidjson/filereadstream.h"
+#include "../double_list/ListThread.h"
+#include "../log4cpp/CLog.h"
+
+void readStrJson(); //从字符串中读取JSON
+void readStrProJson(); //从字符串中读取JSON（内容复杂些）
+void readFileJson(); //从文件中读取JSON
+void writeFileJson();  //将信息保存为JSON格式
+
+extern "C"{
+#include <zmq.h>
+#include <zmq_utils.h>
+}
+
+
+extern void * pSock ;
+
+
+
 
 #ifdef RECEIVE_SAVE_PICTURE
 
@@ -34,6 +57,8 @@ SendQueue::SendQueue(from_server_info *pServerInfo) : m_pServerInfo(pServerInfo)
         boost::thread *thrCap = new boost::thread(boost::bind(&SendQueue::send_cap_queue, this, i));
         m_listThr.push_back(thrCap);
     }
+    boost::thread *thrzmqserver = new boost::thread(boost::bind(&SendQueue::server_queue, this, 0));  //xj  add
+    m_listThr.push_back(thrzmqserver);
 
     //若存在本地推送图片，初始化本地推送库
 #ifdef RECEIVE_SAVE_PICTURE
@@ -99,6 +124,47 @@ void SendQueue::OnGetBuffer(const int nThreadID) {
     ReadFaceBuff(nThreadID);
 
 }
+
+
+void writeFileJson()
+{
+    //根节点
+  
+}
+
+
+void SendQueue::server_queue(const int nThreadID){
+    void *context = zmq_ctx_new();
+    void *s = zmq_socket(context, ZMQ_REP);
+    int rc = zmq_bind(s, "tcp://*:5555");
+    assert (rc == 0);
+
+    while (1)
+    {
+        char buffer[1024] = {0};
+        zmq_recv(s, buffer, sizeof(buffer) - 1, 0);
+        auto document = GetJsonMsg(buffer);
+
+        const Value &cur_server = document;
+        int operate = cur_server["operate"].GetInt64();
+        if(operate==1)
+        {
+
+        }
+        //strcat(buffer, ", heheda");
+        char *testbuf="hello  OK";
+        zmq_send(s, testbuf, strlen(testbuf) + 1, 0);
+
+    }
+
+    zmq_close(s);
+    zmq_ctx_destroy(context);
+
+
+
+}
+
+
 
 void SendQueue::OnGetCapBuffer(const int nThreadID) {
     //未登录
@@ -691,6 +757,20 @@ void SendQueue::OnGetPicToSend(const PLIST_BUFFER plistBuffer, const int nThread
 
     m_pServerInfo->SendPicture(head.SerializeAsString() + sendFaceMessage.SerializeAsString());
 
+    char Msg[1024] = { 0 };
+    int size2=sendFaceMessage.ByteSize();
+    void *buffer=malloc(size2);
+    sendFaceMessage.SerializeToArray((void *) buffer, size2);;
+    printf("size2=%d\n",size2);
+    if (zmq_send(pSock,buffer, size2,   0) < 0)
+    {
+        printf("serial send1 error\n");
+    }
+    zmq_recv(pSock, Msg, sizeof(Msg), 0);
+    printf("Msg=%s\n",Msg);
+    free(buffer);
+    buffer=NULL;
+
 
 
 #ifdef RECEIVE_SAVE_PICTURE
@@ -897,6 +977,10 @@ int SendQueue::GetFaceFile(const PLIST_BUFFER plistBuffer, SEND_PICTURE_DATE *pS
 int SendQueue::CopyAlarmRect(const PLIST_BUFFER plistBuffer, SEND_PICTURE_DATE *pSendPictureDate, const int nThreadID) {
     vector<uchar> buffBack;
     //加载buffer
+
+    printf("before  modify  plistBuffer->camerasPic.nBackgroundPicLen=%d\n", plistBuffer->camerasPic.nBackgroundPicLen);
+    printf("before  modify plistBuffer->nBackBufferSize=%d\n",plistBuffer->nBackBufferSize);
+    //plistBuffer->camerasPic.nBackgroundPicLen=plistBuffer->nBackBufferSize;//xj  add  may  be not  correct
     copy(plistBuffer->camerasPic.pBackBuffer,
          plistBuffer->camerasPic.pBackBuffer + plistBuffer->camerasPic.nBackgroundPicLen,
          back_inserter(buffBack));
@@ -920,24 +1004,63 @@ int SendQueue::CopyAlarmRect(const PLIST_BUFFER plistBuffer, SEND_PICTURE_DATE *
     //检查所要拷贝内存大小是否符合要求
     g_pListThread->CheckBuffer(plistBuffer->camerasPic.nBackgroundPicLen, FACE_PIC_TAG, plistBuffer);
     logDebug("plistBuffer  nFaceBufferSize:"+to_string(plistBuffer->nFaceBufferSize));
-    logDebug("plistBuffer   nBackgroundPicLen:"+to_string(plistBuffer->nFaceBufferSize));
+    logDebug("plistBuffer   nBackgroundPicLen:"+to_string(plistBuffer->nBackBufferSize));
     //拷贝内存
-    memcpy(plistBuffer->camerasPic.pFaceBuffer, plistBuffer->camerasPic.pBackBuffer,
-           plistBuffer->camerasPic.nBackgroundPicLen);
+//    memcpy(plistBuffer->camerasPic.pFaceBuffer, plistBuffer->camerasPic.pBackBuffer,
+//           plistBuffer->camerasPic.nBackgroundPicLen);//xj  delete
+
+
+    /*********************************add  begin************/
+    vector<uchar> buffFace;
+    printf("before  modify plistBuffer->camerasPic.nFacePicLen=%d\n",plistBuffer->camerasPic.nFacePicLen);
+    printf("before  modify plistBuffer->nFaceBufferSize=%d\n",plistBuffer->nFaceBufferSize);
+    plistBuffer->camerasPic.nFacePicLen=plistBuffer->nFaceBufferSize;//xj add ,may be  not  correct
+
+
+    //加载buffer
+    copy(plistBuffer->camerasPic.pFaceBuffer,
+         plistBuffer->camerasPic.pFaceBuffer + plistBuffer->camerasPic.nFacePicLen,
+         back_inserter(buffFace));
+
+
+    if (buffFace.size() <= 0) {
+        logError("Copy buffer 3 error!");
+        return -1;
+    }
+
+    //解码
+    cv::Mat matFace = cv::imdecode(buffFace, CV_LOAD_IMAGE_COLOR);
+    IplImage imgFace = IplImage(matFace);
+
+    pSendPictureDate->sFaceRect.nX = plistBuffer->camerasPic.sAlarmRect_JVT.nX;
+    pSendPictureDate->sFaceRect.nY = plistBuffer->camerasPic.sAlarmRect_JVT.nY;
+    pSendPictureDate->sFaceRect.nWidth = imgFace.width;
+    pSendPictureDate->sFaceRect.nHeight = imgFace.height;
+    logDebug("face picture width:" + to_string(pSendPictureDate->sFaceRect.nWidth));
+    logDebug("face picture height:" + to_string(pSendPictureDate->sFaceRect.nHeight));
+    pSendPictureDate->nFaceLen = plistBuffer->camerasPic.nFacePicLen;
+
+//*****************************add end***********************************//
+
+
+
+
+
 
     //获取背景图片分辨率，填入数组
-    pSendPictureDate->sFaceRect.nX = 0;
+ /*   pSendPictureDate->sFaceRect.nX = 0;
     pSendPictureDate->sFaceRect.nY = 0;
     pSendPictureDate->sFaceRect.nWidth = img.width;
-    pSendPictureDate->sFaceRect.nHeight = img.height;
+    pSendPictureDate->sFaceRect.nHeight = img.height;*/   //xj delete
 
 
 
-    logDebug("face picture nwith:"+to_string(pSendPictureDate->sFaceRect.nWidth ));
+    /*logDebug("face picture nwith:"+to_string(pSendPictureDate->sFaceRect.nWidth ));
     logDebug("face picture  nHeigh:"+to_string(pSendPictureDate->sFaceRect.nHeight));
+    */   //xj delete
 
     //获取图片长度
-    pSendPictureDate->nFaceLen = plistBuffer->camerasPic.nBackgroundPicLen;
+    //pSendPictureDate->nFaceLen = plistBuffer->camerasPic.nBackgroundPicLen;//xj  delete
     //将展示图片加入内存中
     //检查所要拷贝内存大小是否符合要求
 //    g_pListThread->CheckBuffer(plistBuffer->camerasPic.nBackgroundPicLen, SHOW_PIC_TAG, plistBuffer);

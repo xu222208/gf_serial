@@ -73,6 +73,15 @@ char* getTimeofymd()
 #include <string.h>
 #include <unistd.h>
 
+
+extern "C"{
+#include <zmq.h>
+#include <zmq_utils.h>
+}
+void * pSock = NULL;
+
+
+
 string pathlogt;
 string testgf;
 string pathcamt;
@@ -211,6 +220,7 @@ string getfile(char *path)
          iter != vec.end() - 1;
          ++iter) {
         //cout << *iter << endl;
+
         tpath = tpath + *iter + "/";
         const char *mystr = tpath.c_str();
         mkdir(mystr, 0777);
@@ -310,6 +320,9 @@ int main(int argc, char *argv[]) {
 //    setsid();
 
 //     char path[]="/var/log/facepics";
+
+
+
 //     printf("%d\n",mkdir("/var/log/facepics", 0777));//创建文件夹
 
     g_log = CLog::getInstance();
@@ -396,6 +409,66 @@ int main(int argc, char *argv[]) {
     while (g_isRun) {
         try {
             boost::thread t1 = boost::thread(ios_run, boost::ref(outq), boost::ref(inq));
+
+            ////**********************************************client**********************/
+            void * pCtx = NULL;
+
+            //使用tcp协议进行通信，需要连接的目标机器IP地址为192.168.1.2
+            //通信使用的网络端口 为7766
+            const char * pAddr = "tcp://192.168.63.13:9999";
+
+
+            //创建context
+            if ((pCtx = zmq_ctx_new()) == NULL)
+            {
+                return 0;
+            }
+            //创建socket
+            if ((pSock = zmq_socket(pCtx, ZMQ_REQ)) == NULL)
+            {
+                zmq_ctx_destroy(pCtx);
+                return 0;
+            }
+            int iSndTimeout = 5000;// millsecond
+            //设置接收超时
+            if (zmq_setsockopt(pSock, ZMQ_RCVTIMEO, &iSndTimeout, sizeof(iSndTimeout)) < 0)
+            {
+                zmq_close(pSock);
+                zmq_ctx_destroy(pCtx);
+                return 0;
+            }
+            //连接目标IP192.168.63.13，端口9999
+            if (zmq_connect(pSock, pAddr) < 0)
+            {
+                zmq_close(pSock);
+                zmq_ctx_destroy(pCtx);
+                return 0;
+            }
+            //循环发送消息
+//            while (1)
+//            {
+//                printf("%%%%%%%%%%%%%%%%%%%%%%%%%\n");
+//                static int i = 0;
+//                char szMsg[1024] = { 0 };
+//                sprintf(szMsg, "hello world : %3d", i++);
+//                printf("Enter to send...\n");
+//                if (zmq_send(pSock, szMsg, sizeof(szMsg), 0) < 0)
+//                {
+//                    fprintf(stderr, "send message faild\n");
+//                    continue;
+//                }
+//                printf("send message : [%s] succeed\n", szMsg);
+//                zmq_recv(pSock, szMsg, sizeof(szMsg), 0);
+//                printf("szMsg=%s\n",szMsg);
+//                //getchar();
+//                printf("$$$$$$$$$$$$$$$$$$$$$$$$$\n");
+//                sleep(1);
+//            }
+
+//            return 0;
+
+
+            //**********************************************************************/
             t1.join();
 
         }
