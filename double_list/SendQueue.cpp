@@ -25,7 +25,7 @@ extern "C"{
 
 
 extern void * pSock ;
-
+extern  void * pSock2;
 
 
 
@@ -539,7 +539,10 @@ void SendQueue::OnGetCapPicToSend(const PLIST_BUFFER plistBuffer, const int nThr
     //相机ID
     sendCarMessage.set_camera_id(nID);
     //车牌评分
+   //
     sendCarMessage.set_license_score(plistBuffer->camerasPic.nFaceScore);
+    sendCarMessage.set_license_score(70);
+    //printf("==========car plistBuffer->camerasPic.nFaceScore=%d\n",plistBuffer->camerasPic.nFaceScore);
     //车牌号码
     sendCarMessage.set_license_plate_num(plistBuffer->camerasPic.cLicense_plate_num);
     //车牌颜色
@@ -607,6 +610,21 @@ void SendQueue::OnGetCapPicToSend(const PLIST_BUFFER plistBuffer, const int nThr
     head.set_message_type(PictureProtocol::MessageType::SEND_CAR_MESSAGE);
 
     m_pServerInfo->SendPicture(head.SerializeAsString() + sendCarMessage.SerializeAsString());
+
+    char Msg[1024] = { 0 };
+    int size2=sendCarMessage.ByteSize();
+    void *buffer=malloc(size2);
+    sendCarMessage.SerializeToArray((void *) buffer, size2);;
+    printf("size2=%d\n",size2);
+    if (zmq_send(pSock2,buffer, size2,   0) < 0)
+    {
+        printf("serial send1 error\n");
+    }
+    zmq_recv(pSock2, Msg, sizeof(Msg), 0);
+    printf("Msg=%s\n",Msg);
+    free(buffer);
+    buffer=NULL;
+
 }
 
 void SendQueue::SendMsg(const string strOut) {
@@ -1013,14 +1031,16 @@ int SendQueue::CopyAlarmRect(const PLIST_BUFFER plistBuffer, SEND_PICTURE_DATE *
     /*********************************add  begin************/
     vector<uchar> buffFace;
     printf("before  modify plistBuffer->camerasPic.nFacePicLen=%d\n",plistBuffer->camerasPic.nFacePicLen);
-    printf("before  modify plistBuffer->nFaceBufferSize=%d\n",plistBuffer->nFaceBufferSize);
-    plistBuffer->camerasPic.nFacePicLen=plistBuffer->nFaceBufferSize;//xj add ,may be  not  correct
+//    printf("before  modify plistBuffer->nFaceBufferSize=%d\n",plistBuffer->nFaceBufferSize);
+//    plistBuffer->camerasPic.nFacePicLen=plistBuffer->nFaceBufferSize;//xj add ,may be  not  correct
 
 
     //加载buffer
     copy(plistBuffer->camerasPic.pFaceBuffer,
          plistBuffer->camerasPic.pFaceBuffer + plistBuffer->camerasPic.nFacePicLen,
          back_inserter(buffFace));
+
+
 
 
     if (buffFace.size() <= 0) {

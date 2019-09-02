@@ -79,7 +79,7 @@ extern "C"{
 #include <zmq_utils.h>
 }
 void * pSock = NULL;
-
+void * pSock2 = NULL;
 
 
 string pathlogt;
@@ -412,21 +412,31 @@ int main(int argc, char *argv[]) {
 
             ////**********************************************client**********************/
             void * pCtx = NULL;
-
+            void * pCtx2 = NULL;
             //使用tcp协议进行通信，需要连接的目标机器IP地址为192.168.1.2
             //通信使用的网络端口 为7766
             const char * pAddr = "tcp://192.168.63.13:9999";
-
+            const char * pAddr2 = "tcp://192.168.63.13:9998";
 
             //创建context
             if ((pCtx = zmq_ctx_new()) == NULL)
             {
                 return 0;
             }
+            if ((pCtx2 = zmq_ctx_new()) == NULL)
+            {
+                return 0;
+            }
+
             //创建socket
             if ((pSock = zmq_socket(pCtx, ZMQ_REQ)) == NULL)
             {
                 zmq_ctx_destroy(pCtx);
+                return 0;
+            }
+            if ((pSock2 = zmq_socket(pCtx2, ZMQ_REQ)) == NULL)
+            {
+                zmq_ctx_destroy(pCtx2);
                 return 0;
             }
             int iSndTimeout = 5000;// millsecond
@@ -437,11 +447,27 @@ int main(int argc, char *argv[]) {
                 zmq_ctx_destroy(pCtx);
                 return 0;
             }
+
+            if (zmq_setsockopt(pSock2, ZMQ_RCVTIMEO, &iSndTimeout, sizeof(iSndTimeout)) < 0)
+            {
+                zmq_close(pSock2);
+                zmq_ctx_destroy(pCtx2);
+                return 0;
+            }
+
             //连接目标IP192.168.63.13，端口9999
             if (zmq_connect(pSock, pAddr) < 0)
             {
                 zmq_close(pSock);
                 zmq_ctx_destroy(pCtx);
+                return 0;
+            }
+
+
+            if (zmq_connect(pSock2, pAddr2) < 0)
+            {
+                zmq_close(pSock2);
+                zmq_ctx_destroy(pCtx2);
                 return 0;
             }
             //循环发送消息
