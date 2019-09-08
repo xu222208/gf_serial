@@ -8,15 +8,41 @@
 #include <string.h>
 #include <tcp_conf_handle.h>
 #include "../rapidjson/rapidjson.h"
-#include "../rapidjson/document.h"
+//#include "../rapidjson/document.h"
 #include "../rapidjson/filereadstream.h"
+#include "../rapidjson/filewritestream.h"
 #include "../double_list/ListThread.h"
 #include "../log4cpp/CLog.h"
+#include <sys/types.h>
 
-void readStrJson(); //从字符串中读取JSON
-void readStrProJson(); //从字符串中读取JSON（内容复杂些）
-void readFileJson(); //从文件中读取JSON
-void writeFileJson();  //将信息保存为JSON格式
+#include <sys/wait.h>
+
+#include <errno.h>
+
+#include <unistd.h>
+
+//#include "../rapidjson/document.h"
+#include "../rapidjson/prettywriter.h"
+#include <istream> //基本输入流
+#include <ostream> //基本输出流
+#include <fstream> //文件输入／输出
+
+#include <cstdio>
+#include <iostream>
+#include <string>
+#include "../rapidjson/document.h"
+#include "../rapidjson/prettywriter.h"
+
+//#include "../rapidjson/FileStream.h"
+#include "../rapidjson/document.h"
+#include "../rapidjson/prettywriter.h"
+#include "../rapidjson/stringbuffer.h"
+
+
+
+#define psln(x) std::cout << #x " = " << (x) << std::endl
+
+
 
 extern "C"{
 #include <zmq.h>
@@ -28,8 +54,10 @@ extern void * pSock ;
 extern  void * pSock2;
 
 
+using namespace std;
+using namespace rapidjson;
 
-#ifdef RECEIVE_SAVE_PICTURE
+#ifdef RECEIVE_SAVE_PICTUREFileReadStream
 
 #include "../receive_picture/ReceivePicture.h"
 
@@ -41,6 +69,7 @@ extern char err[];
 
 extern char* getTimeofymd();
 extern char* getTimeofh_m_s_ms();
+
 extern int gatewayId;
 extern int cameraId;
 SendQueue::SendQueue(from_server_info *pServerInfo) : m_pServerInfo(pServerInfo) {
@@ -133,7 +162,39 @@ void writeFileJson()
 }
 
 
+
 void SendQueue::server_queue(const int nThreadID){
+
+    Document jsonDoc= GetJsonMsg("/home/xujun/test3.json");
+    rapidjson::Value& names_json = jsonDoc["Info"];
+    for (rapidjson::Value::ValueIterator iter=names_json.Begin(); iter!=names_json.End();)
+    {
+        std::int32_t id = (*iter)["id"].GetInt();
+
+        if (id == 14) {
+            iter = names_json.Erase(iter);
+            printf("remove id varry\n");
+        }
+        else
+            ++iter;
+    }
+
+
+
+    rapidjson::StringBuffer buffer3;
+    Writer<StringBuffer> writer3(buffer3);
+    jsonDoc.Accept(writer3);
+
+    //printf("%s\n", str.c_str());
+    printf("%s\n", buffer3.GetString());
+    std::string strPath = "/home/xujun/test3.json";
+    FILE* myFile = fopen(strPath.c_str(), "w");  //windows平台要使用wb
+    if (myFile) {
+        fputs(buffer3.GetString(), myFile);
+        fclose(myFile);
+    }
+
+
     void *context = zmq_ctx_new();
     void *s = zmq_socket(context, ZMQ_REP);
     int rc = zmq_bind(s, "tcp://*:5555");
@@ -141,19 +202,134 @@ void SendQueue::server_queue(const int nThreadID){
 
     while (1)
     {
-        char buffer[1024] = {0};
-        zmq_recv(s, buffer, sizeof(buffer) - 1, 0);
-        auto document = GetJsonMsg(buffer);
 
-        const Value &cur_server = document;
+
+        static int  b=1;
+        char buffer[1024*1024]={0};
+        zmq_recv(s, (void *)buffer, sizeof(buffer) - 1, 0);
+        Document d1;
+       // d1.SetObject();//xj  add
+        d1.Parse(buffer);
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if(d1.HasMember("operate")==0)
+        {
+            printf("d1.HasMember operate is 0,exit from program\n");
+            return;
+        }
+        Value& st = d1["operate"];
+        printf("st.GetInt()=%d\n",st.GetInt());
+
+
+        //const Value &cur_server = document;
+        const Value &cur_server = d1;
         int operate = cur_server["operate"].GetInt64();
         if(operate==1)
         {
 
-        }
-        //strcat(buffer, ", heheda");
-        char *testbuf="hello  OK";
-        zmq_send(s, testbuf, strlen(testbuf) + 1, 0);
+            Document d;
+           // d.SetObject();
+            string filename = "/home/xujun/test3.json";
+            ifstream json_file;
+            json_file.open(filename.c_str());
+            string json;
+            if (!json_file.is_open()) {
+                cout << "Error opening file" << endl;
+                d= GetJsonMsg("/home/xujun/test3.json");
+                d.SetObject();
+                //exit(1);
+            }
+            else {
+                getline(json_file, json);
+                //Document d;
+                d.SetObject();//xj
+                d.Parse<0>(json.c_str());
+            }
+
+
+
+
+            rapidjson::Document::AllocatorType& allocator = d.GetAllocator();
+            rapidjson::Value info_array(rapidjson::kArrayType);
+            rapidjson::Value  info_object(rapidjson::kObjectType);
+            //info_object.SetObject();//?????
+
+
+
+
+            Value &sk3=d1["data"]["id"];
+            info_object.AddMember("id",sk3.GetInt(),allocator);
+            printf("======\n");
+
+
+
+
+
+
+            rapidjson::Value&  sk5=d1["data"]["direction"];
+
+            string cc=sk5.GetString();
+            sk5.GetStringLength();
+
+            rapidjson::Value p_value(rapidjson::kStringType);
+            p_value.SetString(cc.c_str(), (int)cc.size(), d.GetAllocator());
+            info_object.AddMember("direction", p_value, d.GetAllocator());
+
+
+            Value &sk4= d1["data"]["brandId"];
+            info_object.AddMember("brandId",sk4.GetInt(),allocator);
+
+
+
+
+
+            int   f=d.HasMember("Info");
+            if(f!=1) {
+
+                info_array.PushBack(info_object, d.GetAllocator());
+
+                d.AddMember("Info", info_array, d.GetAllocator());
+
+            } else{
+
+               Value &node2= d["Info"];
+
+
+                node2.PushBack(info_object, d.GetAllocator());
+
+            }
+
+
+            StringBuffer buffer2;
+            Writer<StringBuffer> writer2(buffer2);
+            d.Accept(writer2);
+
+            psln(buffer2.GetString());
+            std::string strPath = "/home/xujun/test3.json";
+            FILE* myFile = fopen(strPath.c_str(), "w");  //windows平台要使用wb
+            if (myFile) {
+
+                fputs(buffer2.GetString(), myFile);
+                fclose(myFile);
+
+            }
+            char *testbuf1="OK";
+            zmq_send(s, testbuf1, strlen(testbuf1) + 1, 0);
+            printf("test ok\n");
+
+    }
+
 
     }
 
