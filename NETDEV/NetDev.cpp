@@ -9,9 +9,9 @@ using namespace std;
 //定义全局队列，用来存储文件信息
 map<int, NETDEV_USELISTTIMER> g_pUselistBuffer_NETDEV;
 
+LPVOID netdev_UserID;
 
-
-
+char  NetDeverrIp[60]={0};
 void cbFaceSnapshotCallBack(LPVOID lpUserID, LPNETDEV_TMS_FACE_SNAPSHOT_PIC_INFO_S pstFaceSnapShotData,LPVOID lpUserData);
 NETDEV_API NEWINTERFACE BOOL STDCALL NETDEV_SetFaceSnapshotCallBack(IN LPVOID lpUserID,
                                                                     IN NETDEV_FaceSnapshotCallBack_PF cbFaceSnapshotCallBack,
@@ -82,7 +82,7 @@ void cbFaceSnapshotCallBack(LPVOID lpUserID, LPNETDEV_TMS_FACE_SNAPSHOT_PIC_INFO
             if (uselisttimer.plistBuffer == nullptr) {
                 //若空队列为空,获取满队列头地址AutoConnectFunc
                 logDebug("The dh data is full and the original data is d(pstReportInfo->stEventInfo.pstEventRes->dwResTypeiscarded!");
-                //g_pListThread->GetHeadBuffer(&plistBuffer, full);
+                //g_pListThread->GetHeadBuffer(&plistBufferrIper, full);
                 g_pListThread->GetBuffer(&uselisttimer.plistBuffer, full);
                 //获取内存图片并保存
                 //SaveFaceFile(uselisttimer.plistBuffer, DAHUA);
@@ -187,6 +187,7 @@ NetDevCamera::NetDevCamera(const char *cCameraIP,const int nPort,const char *cUs
           m_cUserName(cUserName),
           m_cPassword(cPassword)
           {
+
         SetCameraInit(OnInitCamera(cCameraIP, nPort, cUserName, cPassword));
 }
 
@@ -235,6 +236,7 @@ bool NetDevCamera::OnInitCamera(const char *cDeviceAddress, const unsigned short
     if (!isSuccess)
     {
         printf("NETDEV_Init Failed errcode(%d)\n",NETDEV_GetLastError());
+        memcpy(NetDeverrIp,cDeviceAddress,strlen(cDeviceAddress));
         return -1;
     }
 
@@ -277,6 +279,7 @@ bool NetDevCamera::OnInitCamera(const char *cDeviceAddress, const unsigned short
     if(pUserID != NULL)
     {
         m_lUserID=pUserID;//add
+        netdev_UserID=m_lUserID;//add
         logInfo("Login Success\n");
     }
     else
@@ -296,5 +299,9 @@ bool NetDevCamera::OnInitCamera(const char *cDeviceAddress, const unsigned short
     return true;
 }
 
+bool NetDevCamera::lNetDev_Logout(LPVOID netdev_UserID)
+{
+    NETDEV_Logout(netdev_UserID);
+}
 
 #endif

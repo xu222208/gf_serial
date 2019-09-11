@@ -1,6 +1,5 @@
 #ifndef COLLECTION_FACE_NETDEV_CAMERA_H
 #define COLLECTION_FACE_NETDEV_CAMERA_H
-
 #include "../global.h"
 
 using namespace std;
@@ -27,7 +26,7 @@ public:
     bool GetCameraInit() {
         return m_isInit;
     }
-
+    bool lNetDev_Logout(LPVOID netdev_UserID);
 
 private:
     //设置初始化标签

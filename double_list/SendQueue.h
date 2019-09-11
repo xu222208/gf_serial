@@ -55,7 +55,7 @@ private:
     void send_cap_queue(const int nThreadID);
 
     //zmq server
-    void server_queue(const int nThreadID);//xj
+    //void server_queue(const int nThreadID);//xj
     //处理图片并发送
     void OnGetPicToSend(const PLIST_BUFFER plistBuffer, const int nThreadID);
 

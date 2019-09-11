@@ -39,10 +39,23 @@
 #include "../rapidjson/stringbuffer.h"
 
 
-
+#include "../global.h"
+#include "../CCameras.h"
+#include <boost/filesystem/operations.hpp>
+#include <dirent.h>
+#include "../hikvision/HCCamera.h"
+#include "../dahua/DHCamera.h"
+#include "../jvt/JVTCamera.h"
+#include "../kuangshi/KSCamera.h"
+#include  "../NETDEV/NetDev.h"
+#include <string>
+#include "stdlib.h"
+#include "stdio.h"
+extern CCameras *pCameras;   //xj  add
+extern int lid6,lid1,lid2,lid3,lid7,lid8;
 #define psln(x) std::cout << #x " = " << (x) << std::endl
 
-
+char* itoa(int num,char* str,int radix);
 
 extern "C"{
 #include <zmq.h>
@@ -63,7 +76,7 @@ using namespace rapidjson;
 
 #endif
 
-
+#include <string>
 extern char tracking[];
 extern char err[];
 
@@ -74,7 +87,7 @@ extern int gatewayId;
 extern int cameraId;
 SendQueue::SendQueue(from_server_info *pServerInfo) : m_pServerInfo(pServerInfo) {
 
-    //设置JPG格式图片保存质量
+    //设置JPG格式图片保存质量lid6
     m_param = vector<int>(2);
     m_param[0] = CV_IMWRITE_JPEG_QUALITY;
     m_param[1] = 80;//default(95) 0-100
@@ -86,11 +99,11 @@ SendQueue::SendQueue(from_server_info *pServerInfo) : m_pServerInfo(pServerInfo)
         boost::thread *thrCap = new boost::thread(boost::bind(&SendQueue::send_cap_queue, this, i));
         m_listThr.push_back(thrCap);
     }
-    boost::thread *thrzmqserver = new boost::thread(boost::bind(&SendQueue::server_queue, this, 0));  //xj  add
-    m_listThr.push_back(thrzmqserver);
+//    boost::thread *thrzmqserver = new boost::thread(boost::bind(&SendQueue::server_queue, this, 0));  //xj  add
+//    m_listThr.push_back(thrzmqserver);
 
     //若存在本地推送图片，初始化本地推送库
-#ifdef RECEIVE_SAVE_PICTURE
+#ifdef RECEIVE_SAVE_PICTURElid6
     if (RECEIVE_PICTURE_Init()) {
         //获取挂载盘路径
         m_strNfsName = RECEIVE_PICTURE_GetNfsPath();
@@ -159,189 +172,6 @@ void writeFileJson()
 {
     //根节点
   
-}
-
-
-
-void SendQueue::server_queue(const int nThreadID){
-
-    void *context = zmq_ctx_new();
-    void *s = zmq_socket(context, ZMQ_REP);
-    int rc = zmq_bind(s, "tcp://*:5555");
-    assert (rc == 0);
-
-    while (1)
-    {
-
-        char buffer[1024*1024]={0};
-        zmq_recv(s, (void *)buffer, sizeof(buffer) - 1, 0);
-        Document d1;
-        d1.SetObject();//xj  add
-        d1.Parse(buffer);
-        if(d1.HasMember("operate")==0)
-        {
-            printf("d1.HasMember operate is 0,exit from program\n");
-            char *testbuf1="send again";
-            zmq_send(s, testbuf1, strlen(testbuf1) + 1, 0);
-            sleep(3);
-
-            break;
-        }
-        Value& st = d1["operate"];
-        printf("st.GetInt()=%d\n",st.GetInt());
-
-
-        //const Value &cur_server = document;
-        const Value &cur_server = d1;
-        int operate = cur_server["operate"].GetInt64();
-        if(operate==1)
-        {
-
-            Document d;
-            d.SetObject();
-            string filename = "/home/xujun/test3.json";
-            ifstream json_file;
-            json_file.open(filename.c_str());
-            string json;
-            if (!json_file.is_open()) {
-                cout << "Error opening file" << endl;
-                d= GetJsonMsg("/home/xujun/test3.json");
-                d.SetObject();
-                //exit(1);
-            }
-            else {
-                getline(json_file, json);
-                //Document d;
-                d.SetObject();//xj
-                d.Parse<0>(json.c_str());
-            }
-
-            rapidjson::Document::AllocatorType& allocator = d.GetAllocator();
-            rapidjson::Value info_array(rapidjson::kArrayType);
-            rapidjson::Value  info_object(rapidjson::kObjectType);
-            info_object.SetObject();//?????
-
-
-            Value &sk3=d1["data"]["id"];
-            info_object.AddMember("id",sk3.GetInt(),allocator);
-
-            Value &sk4= d1["data"]["brandId"];
-            info_object.AddMember("brandId",sk4.GetInt(),allocator);
-
-
-            rapidjson::Value&  sk5=d1["data"]["ip"];
-            string cc=sk5.GetString();
-            rapidjson::Value p_value(rapidjson::kStringType);
-            p_value.SetString(cc.c_str(), (int)cc.size(), d.GetAllocator());
-            info_object.AddMember("ip", p_value, d.GetAllocator());
-
-
-            sk5=d1["data"]["port"];
-            cc=sk5.GetString();
-            p_value.SetString(cc.c_str(), (int)cc.size(), d.GetAllocator());
-            info_object.AddMember("port", p_value, d.GetAllocator());
-
-
-
-            sk5=d1["data"]["model"];
-            cc=sk5.GetString();
-            p_value.SetString(cc.c_str(), (int)cc.size(), d.GetAllocator());
-            info_object.AddMember("model", p_value, d.GetAllocator());
-
-            sk5=d1["data"]["username"];
-            cc=sk5.GetString();
-            p_value.SetString(cc.c_str(), (int)cc.size(), d.GetAllocator());
-            info_object.AddMember("username", p_value, d.GetAllocator());
-
-
-            sk5=d1["data"]["password"];
-            cc=sk5.GetString();
-            p_value.SetString(cc.c_str(), (int)cc.size(), d.GetAllocator());
-            info_object.AddMember("password", p_value, d.GetAllocator());
-
-
-            Value &sk6= d1["data"]["status"];
-            info_object.AddMember("status",sk6.GetInt(),allocator);
-
-
-            sk5=d1["data"]["url"];
-            cc=sk5.GetString();
-            p_value.SetString(cc.c_str(), (int)cc.size(), d.GetAllocator());
-            info_object.AddMember("url", p_value, d.GetAllocator());
-
-
-
-            int   f=d.HasMember("Info");
-            if(f!=1) {
-
-                info_array.PushBack(info_object, d.GetAllocator());
-
-                d.AddMember("Info", info_array, d.GetAllocator());
-
-            } else{
-
-               Value &node2= d["Info"];
-
-
-                node2.PushBack(info_object, d.GetAllocator());
-
-            }
-
-
-            StringBuffer buffer2;
-            Writer<StringBuffer> writer2(buffer2);
-            d.Accept(writer2);
-
-            psln(buffer2.GetString());
-            std::string strPath = "/home/xujun/test3.json";
-            FILE* myFile = fopen(strPath.c_str(), "w");  //windows平台要使用wb
-            if (myFile) {
-
-                fputs(buffer2.GetString(), myFile);
-                fclose(myFile);
-
-            }
-            char* testbuf1="200";
-            zmq_send(s, testbuf1, strlen(testbuf1) + 1, 0);
-            printf("add ok\n");
-
-    }
-    else if( operate==2)
-        {
-            Document jsonDoc= GetJsonMsg("/home/xujun/test3.json");
-            rapidjson::Value &names_json = jsonDoc["Info"];
-            for (rapidjson::Value::ValueIterator iter = names_json.Begin(); iter != names_json.End();) {
-                std::int32_t id = (*iter)["id"].GetInt();
-                if (id ==d1["data"]["id"]) {
-                    iter = names_json.Erase(iter);
-                    printf("remove id varry\n");
-                } else
-                    ++iter;
-            }
-            rapidjson::StringBuffer buffer3;
-            Writer<StringBuffer> writer3(buffer3);
-            jsonDoc.Accept(writer3);
-            //printf("%s\n", str.c_str());
-            printf("%s\n", buffer3.GetString());
-            std::string strPath = "/home/xujun/test3.json";
-            FILE *myFile = fopen(strPath.c_str(), "w");  //windows平台要使用wb
-            if (myFile) {
-                fputs(buffer3.GetString(), myFile);
-                fclose(myFile);
-            }
-            char* testbuf1="200";
-            zmq_send(s, testbuf1, strlen(testbuf1) + 1, 0);
-            printf("delete ok\n");
-
-        }
-
-    }
-
-    zmq_close(s);
-    zmq_ctx_destroy(context);
-
-
-
 }
 
 

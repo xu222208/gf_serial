@@ -46,6 +46,10 @@ public:
     //发送相机状态
     void send_camera_state(string strIP, bool isState);
 
+    void server_queue();
+
+
+    void reconnect_idele_cameras(char  *buffer);
 private:
     //初始化所有相机
     void OnInitCameras();
@@ -94,16 +98,24 @@ private:
     //相机重连线程
     void reconnect_cameras();
 
+
+
+
 private:
     //存储相机信息，根据id查找相机信息
     map<uint64_t, CAMERA_MSG *> m_CameraMap;
     list<FACE_CAMERA_MSG> m_listCameraMsg;
+
     //创建文件监听线程对象
     boost::thread m_thread;
+    boost::thread m_thread_sq;
+    void th_server_queue();
     //创建掉线重连线程
     boost::thread m_threadReconnect;
     //设置重连线程标签
     bool m_isReconnect = true;
+
+
     //创建时间监听线程对象
     boost::thread m_threadTime;
     bool m_isRun = true;

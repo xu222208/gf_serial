@@ -21,7 +21,7 @@
 #include <string>
 #include<sys/timeb.h>
 
-
+CCameras *pCameras;   //xj  add
 using namespace std;
 struct NowDate{char tmp0[16]; //年月日
 char tmp1[16]; //时分秒
@@ -230,6 +230,8 @@ string getfile(char *path)
     return (*(vec.end()-1));
 }
 
+
+
 int main(int argc, char *argv[]) {
     //显示版本号
     if (2 == argc) {
@@ -403,8 +405,8 @@ int main(int argc, char *argv[]) {
     SendQueue *pSendQueue = new SendQueue(&inq_op);
 
     //添加相机类
-    CCameras *pCameras = new CCameras(pSendQueue);
-
+   // CCameras *pCameras = new CCameras(pSendQueue);//xj  delete
+    pCameras = new CCameras(pSendQueue);//xj  add
     //启动传输线
     while (g_isRun) {
         try {

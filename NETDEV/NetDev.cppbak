@@ -42,6 +42,7 @@ NetDevCamera::NetDevCamera(const char *cCameraIP,const int nPort,const char *cUs
           m_cUserName(cUserName),
           m_cPassword(cPassword)
           {
+
         SetCameraInit(OnInitCamera(cCameraIP, nPort, cUserName, cPassword));
 }
 
@@ -578,6 +579,7 @@ bool NetDevCamera::OnInitCamera(const char *cDeviceAddress, const unsigned short
     if (!isSuccess)
     {
         printf("NETDEV_Init Failed errcode(%d)\n",NETDEV_GetLastError());
+        strcpy(NetDeverrIp,cDeviceAddress);
         return -1;
     }
 
