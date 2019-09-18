@@ -5,7 +5,7 @@
 #ifndef TESTPICTURE_HCCAMERA_H
 #define TESTPICTURE_HCCAMERA_H
 
-//╚╦┴│╞└╖╓
+//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
 #define MIN_FACE_SCORE        70
 
 #include "HCNetSDK.h"
@@ -33,12 +33,12 @@ enum {
     Pic_Size_HD800P
 };
 
-//╫е┼─═╝╞м╗ё╚б
+//╫ея┐╜я┐╜═╝╞мя┐╜я┐╜╚б
 extern bool FaceSnapResult(const char *pAlarmInfo);
 
 extern bool AcsAlarmResult(const NET_DVR_ALARMER *pAlarmer, const char *pAlarmInfo);
 
-//╫е┼─═╝╞м╗ё╚б
+//╫ея┐╜я┐╜═╝╞мя┐╜я┐╜╚б
 extern bool LicenseSnapResult(const NET_DVR_ALARMER *pAlarmer, const char *pAlarmInfo);
 
 class HCCamera {
@@ -48,13 +48,13 @@ public:
 
     ~HCCamera();
 
-    //╚╦┴│╝ь▓т▒и╛п
+    //я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜т▒ия┐╜я┐╜
     void FacedetectAlarm(char *pAlarmInfo);
 
-    //╚╦┴│╒ь▓т▒и╛п╨┼╧в
+    //я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜т▒ия┐╜я┐╜я┐╜я┐╜╧в
     void FaceDetereconnCameraction(char *pAlarmInfo);
 
-    //╗ё╚б│ї╩╝╗п╫┤╠м
+    //я┐╜я┐╜╚бя┐╜я┐╜╩╝я┐╜я┐╜╫┤╠м
     bool GetCameraInit() {
         return m_isInit;
     }
@@ -62,49 +62,49 @@ public:
 
 
 private:
-    // │ї╩╝╗п╧р╗·
+   //  я┐╜я┐╜╩╝я┐╜я┐╜я┐╜я┐╜я┐╜
     bool OnInitCamera(const char *cDeviceAddress, const WORD wPort, const char *cUserName, const char *cPassword,
                       const int nTag);
 
-    //╞Ї╙├▓╝╖└
+    //я┐╜я┐╜я┐╜├▓я┐╜я┐╜я┐╜
     bool OnSetupAlarmChan();
 
-    //╗ё╚б╚╦┴│╫е┼─┼ф╓├╨┼╧в
+    //я┐╜я┐╜╚бя┐╜я┐╜я┐╜я┐╜╫ея┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜╧в
     void GetDVRFaceSnapConfig();
 
-    //╔ш╓├╚╦┴│╫е┼─┼ф╓├╨┼╧в
+    //я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜╫ея┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜╧в
     bool SetDVRFaceSnapConfig(NET_VCA_FACESNAPCFG sNetFaceSnapcfg);
 
-    //╗ё╚б╚╦┴│╝ь▓щ▒и╛п╨┼╧в
+    //я┐╜я┐╜╚бя┐╜я┐╜я┐╜я┐╜я┐╜я┐╜щ▒ия┐╜я┐╜я┐╜я┐╜╧в
     void GetDVRFaceDetect();
 
-    //╗ё╚б─▄┴ж╝п
+    //я┐╜я┐╜╚бя┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
     bool GetAbility(const DWORD dwAbilityType, const char *cAbility, const char *cElem = nullptr,
                     const char *cElem1 = nullptr);
 
-    //╔ш╓├│ї╩╝╗п▒ъ╟й
+    //я┐╜я┐╜я┐╜├│я┐╜╩╝я┐╜я┐╜я┐╜я┐╜╟й
     void SetCameraInit(bool isInit) {
         m_isInit = isInit;
     }
 
-    //╔ш╓├├┼╜√▓╬╩¤
+    //я┐╜я┐╜я┐╜я┐╜я┐╜┼╜я┐╜я┐╜я┐╜я┐╜я┐╜
     bool SetEntranceGuardCfg();
 
-    //╔ш╓├═°┬ч╫е┼─
+    //я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜╫ея┐╜я┐╜
     bool OnContinuousShoot();
 
 private:
     LONG m_lUserID;
     LONG m_lHandle;
-    //╧р╗·IP
+    //я┐╜я┐╜я┐╜IP
     string m_strCameraIP;
-    //╢╦┐┌║┼
+    //я┐╜╦┐┌║я┐╜
     const int m_nPort;
-    //╙├╗з├√
+    //я┐╜├╗я┐╜я┐╜я┐╜
     const char *m_cUserName;
-    //├▄┬ы
+    //я┐╜я┐╜я┐╜я┐╜
     const char *m_cPassword;
-    //╔ш╢и╩╟╖ё│ї╩╝╗п│╔╣ж▒ъ╟й
+    //я┐╜ш╢ия┐╜╟╖я┐╜я┐╜╩╝я┐╜я┐╜я┐╜╔╣я┐╜я┐╜я┐╜╟й
     bool m_isInit = true;
 };
 

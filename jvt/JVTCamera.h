@@ -29,13 +29,15 @@ public:
 
     //定义断线重连相机
     void reconnCamera();
+
+
 private:
     //设置初始化标签
     void SetCameraInit(bool isInit) {
         m_isInit = isInit;
     }
     // 初始化相机
-    bool OnInitCamera(const char *cDeviceAddress,const unsigned short wPort,const char *cUserName,const char *cPassword);
+    bool OnInitCamera(const char *cDeviceAddress,const unsigned short wPort,const char *cUserName,const char *cPassword);//xj  delete
     //清空资源
     void Ondestroy();
 private:

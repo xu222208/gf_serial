@@ -10,7 +10,7 @@ option(RECEIVE_PICTURE "Use tutorial provided math implementation" OFF)
 if (RECEIVE_PICTURE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -L../receive_picture_lib/ -I../receive_picture/")
     set(EXTRA_LIBS_RECEIVE receive_save_picture rabbitmq mongocxx bsoncxx)
-    set(SOURCE_FILES receive_picture/ReceivePicture.h log4cpp/RollingFileAppender.cpp log4cpp/RollingFileAppender.hh)
+    set(SOURCE_FILES receive_picture/ReceivePicture.h log4cpp/RollingFileAppender.cpp log4cpp/RollingFileAppender.hh ipnc/IPNCCamera.h)
     ADD_DEFINITIONS(-D RECEIVE_SAVE_PICTURE)
 endif (RECEIVE_PICTURE)
 

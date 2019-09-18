@@ -32,7 +32,9 @@ typedef enum _CAMERA_TAG {
     //旷世
             KUANGSHI,
     //宇视
-           NETDEV
+           NETDEV,
+    //君旭
+           IPNC
 } CAMERA_TAG;
 
 typedef enum _CAP_TYPE {

@@ -434,10 +434,13 @@ void CCameras::reconnect_idele_cameras(char *buffer) {
     int   f=document.HasMember("data");
     FACE_CAMERA_MSG face_camera_msg;
 
+    printf("======================\n");
    if(f==1)
    {
+       printf("*****************\n");
     Value &names_json=document["data"];
     if (names_json.IsArray()) {
+        printf("####################\n");
         //NETDEV_Reboot(netdev_UserID);
         for (int i = 0; i < names_json.Size(); ++i) {
             const Value &cur_camera = names_json[i];
@@ -453,19 +456,21 @@ void CCameras::reconnect_idele_cameras(char *buffer) {
             face_camera_msg.nPort = cur_camera["port"].GetInt();
             face_camera_msg.strUserName = cur_camera["username"].GetString();
             face_camera_msg.strPassword = cur_camera["password"].GetString();
+            printf("$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
             printf("face_camera_msg.nType=%d\n",face_camera_msg.nType);
             if(face_camera_msg.nType==NETDEV) {
                 NetDevCamera *NETD=new NetDevCamera(face_camera_msg.strIP.c_str(), face_camera_msg.nPort,
                                 face_camera_msg.strUserName.c_str(), face_camera_msg.strPassword.c_str());
-                if(NETD->GetCameraInit()==FALSE)
+                //if(NETD->GetCameraInit()==FALSE)
+                if(NETD->GetCameraInit()!= true)
                 {
                     lid8=face_camera_msg.nID;
 
                     printf("lid8=%d\n",lid8);
-                    char testbuf1[20]={0};
-                    itoa(lid8,testbuf1,10);
+
+                    char *testbuf1="500";
                     zmq_send(s, testbuf1, strlen(testbuf1) + 1, 0);
-                    lid8=0;
+
                     printf("reboot failue\n");
 
                 }
@@ -474,15 +479,18 @@ void CCameras::reconnect_idele_cameras(char *buffer) {
             if(face_camera_msg.nType==HIKVISION) {
                 HCCamera *HCC=new HCCamera(face_camera_msg.strIP.c_str(), face_camera_msg.nPort,
                                                     face_camera_msg.strUserName.c_str(), face_camera_msg.strPassword.c_str());
-                if(HCC->GetCameraInit()==FALSE)
+
+
+                if(HCC->GetCameraInit() != true )
                 {
                     lid1=face_camera_msg.nID;
-
-                    printf("lid1=%d\n",lid1);
-                    char testbuf1[20]={0};
-                    itoa(lid1,testbuf1,10);
+//
+//                    printf("lid1=%d\n",lid1);
+//                    char testbuf1[20]={0};
+//                    itoa(lid1,testbuf1,10);
+                    char *testbuf1="500";
                     zmq_send(s, testbuf1, strlen(testbuf1) + 1, 0);
-                    lid1=0;
+
                     printf("reboot failue\n");
 
                 }
@@ -491,15 +499,14 @@ void CCameras::reconnect_idele_cameras(char *buffer) {
             if(face_camera_msg.nType==DAHUA) {
                 DHCamera *DAHUA=new DHCamera(NULL,face_camera_msg.strIP.c_str(), face_camera_msg.nPort,
                                            face_camera_msg.strUserName.c_str(), face_camera_msg.strPassword.c_str());
-                if(DAHUA->GetCameraInit()==FALSE)
+                if(DAHUA->GetCameraInit()!= true)
                 {
                     lid2=face_camera_msg.nID;
 
                     printf("lid2=%d\n",lid2);
-                    char testbuf1[20]={0};
-                    itoa(lid2,testbuf1,10);
+                    char *testbuf1="500";
                     zmq_send(s, testbuf1, strlen(testbuf1) + 1, 0);
-                    lid2=0;
+
                     printf("reboot failue\n");
 
                 }
@@ -507,15 +514,14 @@ void CCameras::reconnect_idele_cameras(char *buffer) {
             if(face_camera_msg.nType==JVT) {
                 JVTCamera *JVTC=new JVTCamera(face_camera_msg.strIP.c_str(), face_camera_msg.nPort,
                                              face_camera_msg.strUserName.c_str(), face_camera_msg.strPassword.c_str());
-                if(JVTC->GetCameraInit()==FALSE)
+                if(JVTC->GetCameraInit()!= true)
                 {
                     lid3=face_camera_msg.nID;
 
                     printf("lid3=%d\n",lid3);
-                    char testbuf1[20]={0};
-                    itoa(lid3,testbuf1,10);
+                    char *testbuf1="500";
                     zmq_send(s, testbuf1, strlen(testbuf1) + 1, 0);
-                    lid3=0;
+
                     printf("reboot failue\n");
 
                 }
@@ -524,15 +530,13 @@ void CCameras::reconnect_idele_cameras(char *buffer) {
             if(face_camera_msg.nType==KUANGSHI) {
                 KSCamera *KSC=new KSCamera(face_camera_msg.strIP.c_str(), face_camera_msg.nPort,
                                               face_camera_msg.strUserName.c_str(), face_camera_msg.strPassword.c_str());
-                if(KSC->GetCameraInit()==FALSE)
+                if(KSC->GetCameraInit()!= true)
                 {
                     lid7=face_camera_msg.nID;
 
-                    printf("lid7=%d\n",lid7);
-                    char testbuf1[20]={0};
-                    itoa(lid7,testbuf1,10);
+                    char *testbuf1="500";
                     zmq_send(s, testbuf1, strlen(testbuf1) + 1, 0);
-                    lid7=0;
+
                     printf("reboot failue\n");
 
                 }
@@ -541,7 +545,7 @@ void CCameras::reconnect_idele_cameras(char *buffer) {
             if(face_camera_msg.nType==BEARHUNTING) {
                 JVTCamera *BEAR=new JVTCamera(face_camera_msg.strIP.c_str(), face_camera_msg.nPort,
                                            face_camera_msg.strUserName.c_str(), face_camera_msg.strPassword.c_str());
-                if(BEAR->GetCameraInit()==FALSE)
+                if(BEAR->GetCameraInit()!= true)
                 {
                     lid6=face_camera_msg.nID;
 
@@ -551,7 +555,7 @@ void CCameras::reconnect_idele_cameras(char *buffer) {
 //                    itoa(lid6,testbuf1,10);
                     zmq_send(s, testbuf1, strlen(testbuf1) + 1, 0);
 
-                    lid6=0;
+
                     printf("reboot failue\n");
 
                 }
@@ -997,14 +1001,25 @@ void CCameras::server_queue(){
         else if(operate==4)
         {
             reconnect_idele_cameras(buffer);
-            if(NetDeverrIp!=0)
+            printf("lid1=%d\n",lid1);
+            printf("lid2=%d\n",lid2);
+            printf("lid3=%d\n",lid3);
+            printf("lid6=%d\n",lid6);
+            printf("lid7=%d\n",lid7);
+            printf("lid8=%d\n",lid8);
+            if(lid6!=0||lid1!=0||lid2!=0||lid3!=0||lid7!=0||lid8!=0)
             {
                 char *testbuf1 = "500";
-                printf("aaaaaaaaaaaaaaaaaa\n");
-                //zmq_send(s, testbuf1, strlen(testbuf1) + 1, 0);
-                zmq_send(s, testbuf1, 3, 0);
-                printf("11111111111111\n");
+                zmq_send(s, testbuf1, strlen(testbuf1) + 1, 0);
                 printf("reboot failure\n");
+                lid6=0;
+                lid1=0;
+                lid2=0;
+                lid3=0;
+                lid7=0;
+                lid8=0;
+
+
             } else {
                 char *testbuf1 = "200";
                 zmq_send(s, testbuf1, strlen(testbuf1) + 1, 0);

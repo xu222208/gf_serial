@@ -237,7 +237,7 @@ bool NetDevCamera::OnInitCamera(const char *cDeviceAddress, const unsigned short
     {
         printf("NETDEV_Init Failed errcode(%d)\n",NETDEV_GetLastError());
         memcpy(NetDeverrIp,cDeviceAddress,strlen(cDeviceAddress));
-        return -1;
+        return false;
     }
 
     char pszDevIP[128];
@@ -272,6 +272,7 @@ bool NetDevCamera::OnInitCamera(const char *cDeviceAddress, const unsigned short
     if (!isSuccess)
     {
         printf("NETDEV_SetFaceSnapshotCallBack Failed errcode(%d)\n",NETDEV_GetLastError());
+        return false;
     }
 
 
@@ -285,7 +286,7 @@ bool NetDevCamera::OnInitCamera(const char *cDeviceAddress, const unsigned short
     else
     {
         printf("NETDEV_Login Failed errcode(%d)\n",NETDEV_GetLastError());
-        return -1;
+        return false;
     }
     if(NETDEV_SetAlarmCallBack(m_lUserID,cbAlarmMessCallBack,this)!=TRUE)
     {
