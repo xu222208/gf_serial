@@ -736,8 +736,8 @@ void CCameras::server_queue(){
             Value &sk4= d1["data"]["type"];
             info_object.AddMember("type",sk4.GetInt(),allocator);
 
-            sk4= d1["data"]["captype"];
-            info_object.AddMember("captype",sk4.GetInt(),allocator);
+            sk4= d1["data"]["capType"];
+            info_object.AddMember("capType",sk4.GetInt(),allocator);
 
             rapidjson::Value&  sk5=d1["data"]["ip"];
             string cc=sk5.GetString();
@@ -906,8 +906,8 @@ void CCameras::server_queue(){
             Value &sk4= d1["data"]["type"];
             info_object.AddMember("type",sk4.GetInt(),allocator);
 
-            sk4= d1["data"]["captype"];
-            info_object.AddMember("captype",sk4.GetInt(),allocator);
+            sk4= d1["data"]["capType"];
+            info_object.AddMember("capType",sk4.GetInt(),allocator);
 
             rapidjson::Value&  sk5=d1["data"]["ip"];
             string cc=sk5.GetString();
