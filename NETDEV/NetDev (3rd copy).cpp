@@ -10,14 +10,6 @@ using namespace std;
 map<int, NETDEV_USELISTTIMER> g_pUselistBuffer_NETDEV;
 
 LPVOID netdev_UserID;
-static int s=0;
-static int t=0;
-
-char *facebuf=NULL;
-char *backbuf=NULL;
-int facelen=0;
-int backlen=0;
-static int ret=1;
 
 char  NetDeverrIp[60]={0};
 void cbFaceSnapshotCallBack(LPVOID lpUserID, LPNETDEV_TMS_FACE_SNAPSHOT_PIC_INFO_S pstFaceSnapShotData,LPVOID lpUserData);
@@ -47,89 +39,30 @@ void cbFaceSnapshotCallBack(LPVOID lpUserID, LPNETDEV_TMS_FACE_SNAPSHOT_PIC_INFO
                 //int nTempPicLen = uselisttimer.plistBuffer->camerasPic.nBackgroundPicLen;
                 //人脸
                 if (pic_pstFaceSnapShotData->enImgType == 2) {
-                    logInfo("==============face snap shot\n");
+                    logInfo("face snap shot");
                     uselisttimer.plistBuffer->camerasPic.nFacePicLen = pic_pstFaceSnapShotData->udwPicBuffLen;
-
                     g_pListThread->CheckBuffer(pic_pstFaceSnapShotData->udwPicBuffLen + 1, FACE_PIC_TAG,
                                                uselisttimer.plistBuffer);
-
                     memcpy(uselisttimer.plistBuffer->camerasPic.pFaceBuffer, pic_pstFaceSnapShotData->pcPicBuff,
                            pic_pstFaceSnapShotData->udwPicBuffLen);
-
-                    s=1;
-                    facebuf=(char *)malloc(uselisttimer.plistBuffer->camerasPic.nFacePicLen);
-
-                    memcpy(facebuf,pic_pstFaceSnapShotData->pcPicBuff,uselisttimer.plistBuffer->camerasPic.nFacePicLen);
-
-                    facelen=uselisttimer.plistBuffer->camerasPic.nFacePicLen;
-
-
-                } else if (pic_pstFaceSnapShotData->enImgType == 1)   //全景
+                }
+                else if (pic_pstFaceSnapShotData->enImgType == 1)   //全景
                 {
-                    logInfo("===============full view\n");
+                    logInfo("full view");
                     //图片长度
                     uselisttimer.plistBuffer->camerasPic.nBackgroundPicLen = pic_pstFaceSnapShotData->udwPicBuffLen;
-
                     //检查内存是否符合大小
                     g_pListThread->CheckBuffer(pic_pstFaceSnapShotData->udwPicBuffLen + 1, BAKE_PIC_TAG,
                                                uselisttimer.plistBuffer);
-
                     //拷贝图片内存
                     memcpy(uselisttimer.plistBuffer->camerasPic.pBackBuffer, pic_pstFaceSnapShotData->pcPicBuff,
                            pic_pstFaceSnapShotData->udwPicBuffLen);
-
-                    t=1;
-                    backbuf=(char *)malloc(uselisttimer.plistBuffer->camerasPic.nBackgroundPicLen );
-
-                    memcpy(backbuf, pic_pstFaceSnapShotData->pcPicBuff,uselisttimer.plistBuffer->camerasPic.nBackgroundPicLen );
-
-                    backlen=uselisttimer.plistBuffer->camerasPic.nBackgroundPicLen;
-                    printf("==================backlen=%d\n",backlen);
-                }
-                if(s==1&&t==1)
-                {
-                    printf("*********get into build face and back*********\n");
-                    uselisttimer.plistBuffer->camerasPic.nFacePicLen = facelen;
-
-                    g_pListThread->CheckBuffer(facelen + 1, FACE_PIC_TAG,
-                                               uselisttimer.plistBuffer);
-
-                    memcpy(uselisttimer.plistBuffer->camerasPic.pFaceBuffer, facebuf,
-                           facelen);
-
-                    uselisttimer.plistBuffer->camerasPic.nBackgroundPicLen = backlen;
-                    g_pListThread->CheckBuffer(backlen + 1, BAKE_PIC_TAG,
-                                               uselisttimer.plistBuffer);
-
-                    memcpy(uselisttimer.plistBuffer->camerasPic.pBackBuffer, backbuf,
-                           backlen);
-
-                    //插入NETDEV_GetLastError缓存队列时间
-                    uselisttimer.plistBuffer->camerasPic.tProgramTime = time(0);
-                    //放入满队列
-                    g_pListThread->PutBuffer(uselisttimer.plistBuffer, full);
-                    printf("uselisttimer.plistBuffer->camerasPic.nFacePicLen=%d\n", uselisttimer.plistBuffer->camerasPic.nFacePicLen);
-                    printf("uselisttimer.plistBuffer->camerasPic.pFaceBuffer=%d\n",uselisttimer.plistBuffer->camerasPic.pFaceBuffer);
-                    printf("uselisttimer.plistBuffer->camerasPic.nBackgroundPicLen=%d\n",uselisttimer.plistBuffer->camerasPic.nBackgroundPicLen);
-
-
-                    s=0;
-                    t=0;
-                    free(facebuf);
-                    facebuf=NULL;
-                    free(backbuf);
-                    backbuf=NULL;
                 }
 
-//                //插入NETDEV_GetLastError缓存队列时间
-//                uselisttimer.plistBuffer->camerasPic.tProgramTime = time(0);
-//                //放入满队列
-//                g_pListThread->PutBuffer(uselisttimer.plistBuffer, full);
-//                printf("uselisttimer.plistBuffer->camerasPic.nFacePicLen=%d\n", uselisttimer.plistBuffer->camerasPic.nFacePicLen);
-//                printf("uselisttimer.plistBuffer->camerasPic.pFaceBuffer=%d\n",uselisttimer.plistBuffer->camerasPic.pFaceBuffer);
-//                printf("uselisttimer.plistBuffer->camerasPic.nBackgroundPicLen=%d\n",uselisttimer.plistBuffer->camerasPic.nBackgroundPicLen);
-//
-//
+                //插入NETDEV_GetLastError缓存队列时间
+                uselisttimer.plistBuffer->camerasPic.tProgramTime = time(0);
+                //放入满队列
+                g_pListThread->PutBuffer(uselisttimer.plistBuffer, full);
                 g_pUselistBuffer_NETDEV.erase(nGroupId);
 
                 sprintf(buf, "%s:picture inster double list!", strIP.c_str());
@@ -212,22 +145,9 @@ void cbFaceSnapshotCallBack(LPVOID lpUserID, LPNETDEV_TMS_FACE_SNAPSHOT_PIC_INFO
                 uselisttimer.plistBuffer->camerasPic.sAlarmRect_JVT.nY = pic_pstFaceSnapShotData->stFacePos.dwTopLeftY;
                 uselisttimer.plistBuffer->camerasPic.sAlarmRect_JVT.nWidth =  pic_pstFaceSnapShotData->stFacePos.dwBottomRightX;
                 uselisttimer.plistBuffer->camerasPic.sAlarmRect_JVT.nHeight = pic_pstFaceSnapShotData->stFacePos.dwBottomRightY;
-                g_pUselistBuffer_NETDEV.insert(make_pair(nGroupId, uselisttimer));//add
             }
-            else if(uselisttimer.plistBuffer==NULL)
-            {
-                printf("before  g_pListThread->ResetBuffer\n");
-                if(ret==1) {
-                    g_pListThread->ResetBuffer(1024 * 2048, 1024 * 50, 40);
-                    ret = 2;
-                }else if(ret==2)
-                {
-                    g_pListThread->ResetBuffer(1024 * 2048, 1024 * 50, 41);
-                    ret=1;
-                }
-                printf("after g_pListThread->ResetBuffer\n");
-            }
-            //g_pUselistBuffer_NETDEV.insert(make_pair(nGroupId, uselisttimer));//delete
+
+            g_pUselistBuffer_NETDEV.insert(make_pair(nGroupId, uselisttimer));
         }
     }
 
@@ -311,6 +231,7 @@ void      cbAlarmMessCallBack(  LPVOID lpUserID,
 bool NetDevCamera::OnInitCamera(const char *cDeviceAddress, const unsigned short wPort, const char *cUserName,
                                 const char *cPassword)
 {
+
     logInfo("=======OnInitCamera:start=======\n");
 
     BOOL isSuccess = NETDEV_Init();

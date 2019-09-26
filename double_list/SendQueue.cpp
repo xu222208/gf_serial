@@ -242,11 +242,14 @@ void SendQueue::ReadCapBuff(const int nThreadID) {
 }
 
 void SendQueue::ReadFaceBuff(const int nThreadID) {
+    //printf("111111111111111111111111111\n");
     PLIST_BUFFER plistBuffer;
     //获取满队列
     g_pListThread->GetBuffer(&plistBuffer, full);
+    //printf("222222222222222\n");
     //先处理实时接收的图片信息，再处理网关曾经保存的图片信息
     if (plistBuffer == nullptr) {
+        //printf("33333333333333333\n");
         //若满队列为空,检查网关硬盘是否有保存数据，若存在,将图片信息放入满队列
         if (g_listStrSavePic.size() == 0) {
             sleep(1);
@@ -268,6 +271,9 @@ void SendQueue::ReadFaceBuff(const int nThreadID) {
         }
         return;
     }
+    printf("=============ReadFaceBuff============\n");
+    printf("plistBuffer->camerasPic.nBackgroundPicLen=%d\n",plistBuffer->camerasPic.nBackgroundPicLen);
+    printf("plistBuffer->camerasPic.nFacePicLen=%d\n",plistBuffer->camerasPic.nFacePicLen);
 
     char temp[100] = {0};
     sprintf(temp, "Thread %d: read face double list!", nThreadID + 1);
